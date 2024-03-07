@@ -13,6 +13,9 @@ class register extends StatefulWidget {
 }
 
 class _registerState extends State<register> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,17 +28,17 @@ class _registerState extends State<register> {
               SizedBox(height: 40,),
               Container(
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: TextFields.textField('Name', Icons.person, false)
+                  child: TextFields.textField('Name', Icons.person, false, nameController)
               ),
               SizedBox(height: 10,),
               Container(
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: TextFields.textField('Email', Icons.email, false)
+                  child: TextFields.textField('Email', Icons.email, false, emailController)
               ),
               SizedBox(height: 10,),
               Container(
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: TextFields.textField('Password', Icons.lock, true)
+                  child: TextFields.textField('Password', Icons.lock, true, passwordController)
               ),
               SizedBox(height: 20,),
               Button.formButtton('Sign Up',

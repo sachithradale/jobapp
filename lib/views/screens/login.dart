@@ -7,6 +7,8 @@ import 'package:jobapp/views/common/textField.dart';
 import '../common/buttons.dart';
 
 class LoginPage extends StatelessWidget {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,12 +24,12 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: 20,),
               Container(
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: TextFields.textField('Email', Icons.email, false)
+                  child: TextFields.textField('Email', Icons.email, false, emailController)
               ),
               SizedBox(height: 10,),
               Container(
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: TextFields.textField('Password', Icons.lock, true)
+                  child: TextFields.textField('Password', Icons.lock, true, passwordController)
               ),
               SizedBox(height: 20,),
               Button.formButtton('Login',

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:jobapp/views/common/colors.dart';
 
 class TextFields{
-  static TextFormField textField(String hintText, IconData icon, bool obscureText) {
+  static TextFormField textField(String hintText, IconData icon, bool obscureText,TextEditingController controller) {
     return TextFormField(
+      controller: controller,
       decoration: InputDecoration(
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppColor.success, width: 2.0),
