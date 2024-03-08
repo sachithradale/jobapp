@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jobapp/views/common/header.dart';
+import 'package:jobapp/views/screens/aboutMe.dart';
 import 'package:jobapp/views/screens/index.dart';
 import 'package:jobapp/views/screens/login.dart';
+import 'package:jobapp/views/screens/profile.dart';
 import 'package:jobapp/views/screens/register.dart';
 
 void main() {
@@ -23,6 +25,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) =>  LoginPage(),
         '/signup': (context) =>  register(),
+        '/profile': (context) =>  profile(),
+        '/aboutMe': (context) =>  aboutMe(),
       }
     );
   }

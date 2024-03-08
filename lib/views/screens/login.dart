@@ -34,7 +34,7 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: 20,),
               Button.formButtton('Login',
                       () =>{
-                        Navigator.pushNamed(context, '/home')
+                        Navigator.pushNamed(context, '/profile')
                       }, MediaQuery.of(context).size.width * 0.8),
               SizedBox(height: 10,),
               Row(
