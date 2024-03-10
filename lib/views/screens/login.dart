@@ -42,6 +42,12 @@ class LoginPage extends StatelessWidget {
                     Navigator.pushNamed(context, '/employerHome')
                   }, MediaQuery.of(context).size.width * 0.8),
               SizedBox(height: 10,),
+              SizedBox(height: 10,),
+              Button.formButtton('job Application',
+                      () =>{
+                    Navigator.pushNamed(context, '/jobApplication')
+                  }, MediaQuery.of(context).size.width * 0.8),
+              SizedBox(height: 10,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
