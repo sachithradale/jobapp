@@ -43,7 +43,7 @@ class LoginPage extends StatelessWidget {
                   AppFonts.customizeText('Don''t have an account?',AppColor.textColor, 12, FontWeight.normal),
                   Button.textButton('Sign Up',
                           () {
-                            Navigator.pushNamed(context, '/signup');
+                            Navigator.pushNamed(context, '/job');
                           },12
                   ),
                 ],
