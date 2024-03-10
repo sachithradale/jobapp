@@ -90,11 +90,9 @@ class Button{
 
   static ElevatedButton formButtton(String text, Function() onPressed,double width) {
     return  ElevatedButton(
-      onPressed: (){
-        onPressed;
-      },
+      onPressed:onPressed,
       child: Text(
-        'Login',
+        text,
         style: TextStyle(
           color: Colors.white,
           fontSize: 20,

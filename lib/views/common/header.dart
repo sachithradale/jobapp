@@ -15,35 +15,42 @@ class customizedAppBar{
   }
 }
 
-class MyDrawer extends StatelessWidget {
+class CustomizedDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
+          const DrawerHeader(
             decoration: BoxDecoration(
               color: Colors.blue,
             ),
             child: Text(
-              'Drawer Header',
+              'SimplyHired',
               style: TextStyle(
+                fontFamily: 'poppins',
                 color: Colors.white,
                 fontSize: 24,
               ),
             ),
           ),
           ListTile(
-            title: Text('Logout'),
+            title: AppFonts.normal('Home', Colors.black),
             onTap: () {
               // Handle item 1 tap
             },
           ),
           ListTile(
-            title: Text('Profile'),
+            title: AppFonts.normal('Profile', Colors.black),
             onTap: () {
               // Handle item 2 tap
+            },
+          ),
+          ListTile(
+            title: AppFonts.normal('Logout', Colors.red),
+            onTap: () {
+              // Handle item 3 tap
             },
           ),
           //
