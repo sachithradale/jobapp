@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:jobapp/views/common/header.dart';
+import 'package:jobapp/views/screens/aboutMe.dart';
+import 'package:jobapp/views/screens/education.dart';
 import 'package:jobapp/views/screens/index.dart';
 import 'package:jobapp/views/screens/login.dart';
+import 'package:jobapp/views/screens/profile.dart';
+import 'package:jobapp/views/screens/qualification.dart';
 import 'package:jobapp/views/screens/register.dart';
+import 'package:jobapp/views/screens/skills.dart';
+import 'package:jobapp/views/screens/workExperience.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +29,12 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) =>  LoginPage(),
         '/signup': (context) =>  register(),
+        '/profile': (context) =>  profile(),
+        '/aboutMe': (context) =>  aboutMe(isEditable: false,),
+        '/workExperience': (context) =>  Experience(),
+        '/education': (context) =>  Education(),
+        '/skills': (context) =>  Skills(),
+        '/qualification': (context) =>  Qualification(),
       }
     );
   }
