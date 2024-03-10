@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jobapp/views/common/header.dart';
 import 'package:jobapp/views/screens/aboutMe.dart';
+import 'package:jobapp/views/screens/applicationSubmission.dart';
 import 'package:jobapp/views/screens/createJob.dart';
 import 'package:jobapp/views/screens/education.dart';
 import 'package:jobapp/views/screens/employerHome.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/qualification': (context) =>  Qualification(),
         '/employerHome': (context) =>  EmployerHome(),
         '/createJob': (context) =>  CreateJob(),
+        '/jobApplication': (context) =>  applicationSubmission(),
       }
     );
   }
