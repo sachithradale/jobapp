@@ -1,11 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jobapp/views/common/buttons.dart';
 import 'package:jobapp/views/common/fonts.dart';
-
+import 'package:file_picker/file_picker.dart';
 import '../common/colors.dart';
 import '../common/header.dart';
 import '../common/textField.dart';
+import 'dart:io';
 
 class aboutMe extends StatefulWidget {
   aboutMe({super.key,required this.isEditable});
@@ -28,6 +31,8 @@ class _aboutMeState extends State<aboutMe> {
     'phone':'458569523'
   };
   List<String> links = ['LinkedIn','Github','Portfolio'];
+  List<int> fileBytes = <int>[];
+  String? selectedfileName;
 
   @override
   void initState() {
@@ -36,6 +41,25 @@ class _aboutMeState extends State<aboutMe> {
     emailController.text = userDetails['email'];
     phoneController.text = userDetails['phone'];
     super.initState();
+  }
+
+  Future<void> pickFile(StateSetter setState) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      PlatformFile file = result.files.single;
+      // print("File Type: " + file.extension.toString());
+      try {
+        File pickedFile = File(file.path!);
+        fileBytes = await pickedFile.readAsBytes();
+        setState(() {
+          selectedfileName = file.name;
+        });
+      } catch (e) {
+        print("Error reading file: $e");
+      }
+    } else {
+      print("File picking canceled");
+    }
   }
 
   @override
@@ -47,9 +71,20 @@ class _aboutMeState extends State<aboutMe> {
           children: [
             Center(child: AppFonts.heading('About me', null)),
             SizedBox(height: 40,),
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage('assets/images/welcome.jpg'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage: fileBytes.isEmpty?AssetImage('assets/images/welcome.jpg'):Image.memory(Uint8List.fromList(fileBytes)).image,
+                ),
+                IconButton(
+                    onPressed: (){
+                      pickFile(setState);
+                    },
+                    icon: Icon(Icons.camera_alt_outlined),
+                )
+              ],
             ),
             Container(
                 width: MediaQuery.of(context).size.width * 0.8,
