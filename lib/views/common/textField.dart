@@ -22,16 +22,17 @@ class TextFields{
     );
   }
 
-  static Column textFieldWithLabel(String hintText, String heading, bool obscureText,TextEditingController controller) {
+  static Column textFieldWithLabel(String hintText, String heading, bool obscureText,TextEditingController controller, bool readOnly) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppFonts.customizeText(heading, AppColor.textColor, 12, FontWeight.bold),
         TextFormField(
+          readOnly:readOnly ,
           controller: controller,
           decoration: InputDecoration(
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColor.success, width: 2.0),
+              borderSide: !readOnly?BorderSide(color: AppColor.success, width: 2.0):BorderSide(color: AppColor.textColor, width: 1.0),
               borderRadius: BorderRadius.circular(10),
             ),
             hintText: hintText,

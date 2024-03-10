@@ -92,7 +92,7 @@ class Button{
     return  ElevatedButton(
       onPressed:onPressed,
       child: Text(
-        'Login',
+        text,
         style: TextStyle(
           color: Colors.white,
           fontSize: 20,

@@ -4,6 +4,7 @@ import 'package:jobapp/views/common/fonts.dart';
 
 import '../common/buttons.dart';
 import '../common/header.dart';
+import 'aboutMe.dart';
 
 class profile extends StatefulWidget {
   const profile({super.key});
@@ -33,7 +34,7 @@ class _profileState extends State<profile> {
                 width:150,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Respond to button press
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => aboutMe(isEditable: true)));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -117,7 +118,9 @@ class _profileState extends State<profile> {
                         AppFonts.subtitle('Work experience', Colors.black),
                         SizedBox(width: 10,),
                         IconButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.pushNamed(context, '/workExperience');
+                          },
                           icon: Icon(
                             Icons.navigate_next,
                             size: 20,
@@ -151,7 +154,9 @@ class _profileState extends State<profile> {
                         AppFonts.subtitle('Education', Colors.black),
                         SizedBox(width: 10,),
                         IconButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.pushNamed(context, '/education');
+                          },
                           icon: Icon(
                             Icons.navigate_next,
                             size: 20,
@@ -185,7 +190,9 @@ class _profileState extends State<profile> {
                         AppFonts.subtitle('Skill', Colors.black),
                         SizedBox(width: 10,),
                         IconButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.pushNamed(context, '/skills');
+                          },
                           icon: Icon(
                             Icons.navigate_next,
                             size: 20,
@@ -219,7 +226,9 @@ class _profileState extends State<profile> {
                         AppFonts.subtitle('Qualifications', Colors.black),
                         SizedBox(width: 10,),
                         IconButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.pushNamed(context, '/qualification');
+                          },
                           icon: Icon(
                             Icons.navigate_next,
                             size: 20,
