@@ -128,7 +128,6 @@ class _SkillsState extends State<Skills> {
             children:[
               Center(child: AppFonts.heading('Add Skills ', null)),
               SizedBox(height: 20,),
-              //serach bar
               Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextFormField(
