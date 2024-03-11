@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:jobapp/views/common/dropDown.dart';
 import 'package:jobapp/views/common/header.dart';
@@ -21,6 +22,26 @@ class _CreateJobState extends State<CreateJob> {
   List<String> jobType = ['Full Time','Part Time','Internship'];
   List<String> workplace = ['On-Site','Remote','Hybrid'];
 
+  List<String> locations=[
+    'CodeSpere- Colombo, Sri Lanka',
+    'Codegen- Colombo, Sri Lanka',
+    '99X Technology- Colombo, Sri Lanka',
+    'Virtusa- Colombo, Sri Lanka',
+    'IFS- Colombo, Sri Lanka',
+    'MillenniumIT- Colombo, Sri Lanka',
+    'SyscoLabs- Colombo, Sri Lanka',
+    'WSO2- Colombo, Sri Lanka',
+    'Zone24x7- Colombo, Sri Lanka',
+    'Pearson- Galle, Sri Lanka',
+    'Creative Software- Colombo, Sri Lanka',
+    'Ideal Group- Galle, Sri Lanka',
+    'LSEG- Colombo, Sri Lanka',
+    'Temenos - Colombo, Sri Lanka'
+  ];
+
+  List<String> filteredLocations = [];
+  String? _selectedLocation;
+
   final PageController _pageController = PageController();
   TextEditingController positionController = TextEditingController();
   TextEditingController searchController = TextEditingController();
@@ -28,6 +49,7 @@ class _CreateJobState extends State<CreateJob> {
   TextEditingController requirementsController = TextEditingController();
   TextEditingController responsibilitiesController = TextEditingController();
   TextEditingController aboutCompanyController = TextEditingController();
+  TextEditingController newLocationController = TextEditingController();
 
   String? _selectedIndustry;
   String? _selectedCategory;
@@ -144,7 +166,8 @@ class _CreateJobState extends State<CreateJob> {
                                   controller: searchController,
                                   onChanged: (value){
                                     setState(() {
-                        
+                                      filteredLocations = locations.where((element) => element.toLowerCase().contains(value.toLowerCase())).toList();
+                                      filteredLocations.add('Other Location');
                                     });
                                   },
                                   decoration: InputDecoration(
@@ -163,8 +186,41 @@ class _CreateJobState extends State<CreateJob> {
                             ),
                             SizedBox(height: 20,),
                             Container(
-                              height: MediaQuery.of(context).size.height * 0.5,
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              child: ListView.builder(
+                                itemCount: filteredLocations.length,
+                                itemBuilder: (context, index){
+                                  return ListTile(
+                                    title: Row(
+                                        children:[
+                                          AppFonts.customizeText(filteredLocations[index], Colors.black, 18, FontWeight.bold),
+                                          Spacer(),
+                                          IconButton(
+                                              onPressed: (){
+                                                filteredLocations[index]== 'Other Location'?setState(() {
+                                                  locationpopup(context, 'Other Location');
+                                                }):
+                                                setState(() {
+                                                  _selectedLocation = filteredLocations[index];
+                                                });
+                                              },
+                                              icon: Icon(Icons.add)
+                                          )
+                                        ]
+                                        ),
+                                    onTap: (){
+                                      setState(() {
+                                        searchController.text = filteredLocations[index];
+                                      });
+                                    },
+                                  );
+                                },
+                              ),
                             ),
+                            AppFonts.subtitle('Selected Location', Colors.black),
+                            SizedBox(height: 10,),
+                            AppFonts.customizeText(_selectedLocation!=null?_selectedLocation!:'No Location Selected', Colors.black, 18, FontWeight.bold),
                             SizedBox(height: 20,),
                             Button.formButtton('Next',
                                     () =>{
@@ -313,6 +369,51 @@ class _CreateJobState extends State<CreateJob> {
             ],
           ),
         )
+    );
+  }
+
+  void locationpopup(BuildContext context, String s) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return AlertDialog(
+            title: AppFonts.customizeText('Location', Colors.black, 18, FontWeight.bold),
+            content: Container(
+              width: MediaQuery.of(context).size.width * 0.6,
+              height: MediaQuery.of(context).size.height * 0.2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextFormField(
+                    controller: newLocationController,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      hintText: 'Enter location',
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Button.formButtton('Add',
+                          () =>{
+                            setState(() {
+                              locations.add(newLocationController.text);
+                              filteredLocations.add(newLocationController.text);
+                              _selectedLocation = newLocationController.text;
+                            }),
+                            Navigator.pop(context)
+                          }, MediaQuery.of(context).size.width * 0.6),
+                ],
+              ),
+            ),
+          );
+        }
     );
   }
 }
