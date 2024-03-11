@@ -76,14 +76,16 @@ class _EmployerHomeState extends State<EmployerHome> {
       drawer: CustomizedEmployeeDrawer(),
       body:Center(
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.8,
+          width: double.infinity,
+          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(height: 20,),
               Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
+                  width: double.infinity,
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   child: TextFormField(
                     controller: searchController,
                     onChanged: (value){
@@ -122,10 +124,13 @@ class _EmployerHomeState extends State<EmployerHome> {
                     ),
                   )
               ),
-              SizedBox(height: 20,),
-              Button.formButtton('+ Create a New Job', (){
-                Navigator.pushNamed(context, '/createJob');
-              }, MediaQuery.of(context).size.width * 0.8),
+              SizedBox(height: 10,),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                child: Button.formButtton('+ Create a New Job', (){
+                  Navigator.pushNamed(context, '/createJob');
+                },double.infinity,),
+              ),
               SizedBox(height: 20,),
               AppFonts.customizeText('Recently Created', Colors.black, 14, FontWeight.bold),
               onSearch==false?
@@ -136,7 +141,7 @@ class _EmployerHomeState extends State<EmployerHome> {
                   itemBuilder: (context, index) {
                     return Container(
                       width: double.infinity,
-                      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         boxShadow: [

@@ -161,7 +161,8 @@ class _CreateJobState extends State<CreateJob> {
                             AppFonts.title('Location', Colors.black),
                             SizedBox(height: 20,),
                             Container(
-                                width: MediaQuery.of(context).size.width * 0.8,
+                                width: double.infinity,
+                                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                                 child: TextFormField(
                                   controller: searchController,
                                   onChanged: (value){
@@ -186,15 +187,19 @@ class _CreateJobState extends State<CreateJob> {
                             ),
                             SizedBox(height: 20,),
                             Container(
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: MediaQuery.of(context).size.height * 0.35,
+                              width: double.infinity,
+                              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                               child: ListView.builder(
                                 itemCount: filteredLocations.length,
                                 itemBuilder: (context, index){
                                   return ListTile(
                                     title: Row(
                                         children:[
-                                          AppFonts.customizeText(filteredLocations[index], Colors.black, 18, FontWeight.bold),
+                                          Container(
+                                              // width: MediaQuery.of(context).size.width * 0.95,
+                                              // height: 30,
+                                              child: AppFonts.customizeText(filteredLocations[index], Colors.black, 14, FontWeight.bold)),
                                           Spacer(),
                                           IconButton(
                                               onPressed: (){
@@ -352,7 +357,8 @@ class _CreateJobState extends State<CreateJob> {
                                   SizedBox(height: 20),
                                   Button.formButtton('Post Job',
                                           () => {
-                              
+                                           //ToDo: Post Job to the database
+                                            Navigator.pushNamed(context, '/employerHome')
                                           }
                                   , MediaQuery.of(context).size.width * 0.8),
                                   SizedBox(height: 20),

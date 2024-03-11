@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jobapp/views/common/fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class customizedAppBar{
   customizedAppBar({required this.title});
@@ -31,7 +32,7 @@ class CustomizedEmployeeDrawer extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'poppins',
                 color: Colors.white,
-                fontSize: 24,
+                fontSize: 20,
               ),
             ),
           ),
@@ -49,7 +50,9 @@ class CustomizedEmployeeDrawer extends StatelessWidget {
           ),
           ListTile(
             title: AppFonts.normal('Logout', Colors.red),
-            onTap: () {
+            onTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.remove('userRole');
               Navigator.pushNamed(context, '/login');
             },
           ),
@@ -100,7 +103,11 @@ class CustomizedAppplicantDrawer extends StatelessWidget {
           ),
           ListTile(
             title: AppFonts.normal('Logout', Colors.red),
-            onTap: () {
+            onTap: () async {
+              //Todo: Add logout functionality
+              //set shared preference to null
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.remove('userRole');
               Navigator.pushNamed(context, '/login');
             },
           ),

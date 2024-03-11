@@ -114,7 +114,7 @@ class _applicationSubmissionState extends State<applicationSubmission> {
                 ),
                 SizedBox(height: 20,),
                 Button.formButtton('Submit', (){
-                  Navigator.pushNamed(context, '/profile');
+                  Navigator.pushNamed(context, '/jonApplicantHome');
                 }, MediaQuery.of(context).size.width * 0.8),
               ],
             ),
