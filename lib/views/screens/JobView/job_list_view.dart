@@ -9,8 +9,7 @@ import '../../../main.dart';
 import '../../common/JobView/job_card_vertical.dart';
 import '../../common/JobView/appbar.dart';
 import '../../common/JobView/curved_edges.dart';
-
-
+import '../../common/header.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -19,6 +18,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: customizedAppBar(title: '').header(context),
+      drawer: CustomizedAppplicantDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -54,7 +55,7 @@ class HomeScreen extends StatelessWidget {
                                       style: Theme.of(context).textTheme.labelMedium!.apply(color: Colors.grey),
                                     ),
                                     Text(
-                                      'Sachithra',
+                                      'Sachithra Madhushan',
                                       style: Theme.of(context).textTheme.headlineSmall!.apply(color: Colors.white),
                                     )
                                   ],
@@ -66,8 +67,7 @@ class HomeScreen extends StatelessWidget {
                                   )
                                 ],
                               ),
-                              SearchContainer(screenWidth: screenWidth , text:'Seach..'),
-
+                              SearchContainer(screenWidth: screenWidth , text:'Search..'),
                             ]
                         ),
                       ),
@@ -78,7 +78,11 @@ class HomeScreen extends StatelessWidget {
             ),
             Padding(
                 padding: EdgeInsets.all(10.0),
-                child : JobListView()
+                child : Container(
+                    // width:MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.6,
+                    child: JobListView()
+                )
             )
           ],
         ),
@@ -108,8 +112,7 @@ class VerticalImageStack extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.only(left:16 , right: 16),
-        child: SizedBox(
-          height: 80,
+        child: Expanded(
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: 9,

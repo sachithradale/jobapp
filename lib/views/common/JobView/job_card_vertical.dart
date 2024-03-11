@@ -15,14 +15,16 @@ class Job {
   final String title;
   final String location;
   final List<String> tags;
-  final double salary;
+  final double lowersalary;
+  final double uppersalary;
   final String imageUrl;
 
   Job({
     required this.title,
     required this.location,
     required this.tags,
-    required this.salary,
+    required this.lowersalary,
+    required this.uppersalary,
     required this.imageUrl,
   });
 }
@@ -97,8 +99,13 @@ class JobCardVertical extends StatelessWidget {
                     .toList(), // Map each tag to a widget
               ),
               SizedBox(width: 30),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
               Text(
-                '\$${job.salary}/mo',
+                'LKR ${job.lowersalary.toInt()}-${job.uppersalary.toInt()}/Mo',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -107,7 +114,6 @@ class JobCardVertical extends StatelessWidget {
               ),
             ],
           ),
-
         ],
       ),
     );
@@ -136,7 +142,8 @@ class JobListView extends StatelessWidget {
       title: 'Junior Developer',
       location: 'Code-space-Colombo-Srilanka',
       tags: ['Remote', 'Full Time'],
-      salary: 8000,
+      lowersalary: 8000,
+      uppersalary: 150000,
       imageUrl: 'https://firebasestorage.googleapis.com/v0/b/physics-book-15c4d.appspot.com/o/download%20(1).png?alt=media&token=d32986bb-9ed8-4f0d-8e0a-21592cea9d5d',
     ),
     // Add more jobs here
@@ -144,14 +151,16 @@ class JobListView extends StatelessWidget {
       title: 'Senior Developer',
       location: 'Tech Hub - New York, USA',
       tags: ['On-site', 'Part Time'],
-      salary: 12000,
+      lowersalary: 12000,
+      uppersalary: 200000,
       imageUrl: 'https://firebasestorage.googleapis.com/v0/b/physics-book-15c4d.appspot.com/o/download%20(1).png?alt=media&token=d32986bb-9ed8-4f0d-8e0a-21592cea9d5d',
     ),
     Job(
       title: 'UI/UX Designer',
       location: 'Design Studio - Paris, France',
       tags: ['Remote', 'Contract'],
-      salary: 10000,
+      lowersalary: 10000,
+      uppersalary: 150000,
       imageUrl: 'https://firebasestorage.googleapis.com/v0/b/physics-book-15c4d.appspot.com/o/download%20(1).png?alt=media&token=d32986bb-9ed8-4f0d-8e0a-21592cea9d5d',
     ),
     // Add more jobs as needed
@@ -159,17 +168,12 @@ class JobListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        height: MediaQuery.of(context).size.height, // Constrain the height
-        child: ListView.builder(
-          physics: NeverScrollableScrollPhysics(), // Disable ListView scrolling
-          itemCount: jobs.length,
-          itemBuilder: (BuildContext context, int index) {
-            return JobCardVertical(job: jobs[index]);
-          },
-        ),
-      ),
+    return ListView.builder(
+      physics: BouncingScrollPhysics(),
+      itemCount: jobs.length,
+      itemBuilder: (BuildContext context, int index) {
+        return JobCardVertical(job: jobs[index]);
+      },
     );
   }
 }

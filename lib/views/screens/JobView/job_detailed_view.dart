@@ -2,14 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
-
 import '../../../controllers/job_view.dart';
 import '../../../main.dart';
-
-
-
-
-
 
 class JobDetailView extends StatelessWidget {
   @override
