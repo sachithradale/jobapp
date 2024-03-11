@@ -72,14 +72,20 @@ class _SavedJobsState extends State<SavedJobs> {
       drawer: CustomizedAppplicantDrawer(),
         body:Center(
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(height: 20,),
+                SizedBox(height: 10,),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  child: AppFonts.customizeText('Saved Jobs', Colors.black, 24, FontWeight.bold),
+                ),
                 Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
+                    width: double.infinity,
+                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     child: TextFormField(
                       controller: searchController,
                       onChanged: (value){
@@ -118,7 +124,7 @@ class _SavedJobsState extends State<SavedJobs> {
                       ),
                     )
                 ),
-                SizedBox(height: 20,),
+                SizedBox(height: 10,),
                 onSearch==false?
                 Expanded(
                   child:ListView.builder(
@@ -127,7 +133,7 @@ class _SavedJobsState extends State<SavedJobs> {
                     itemBuilder: (context, index) {
                       return Container(
                         width: double.infinity,
-                        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           boxShadow: [
@@ -213,7 +219,7 @@ class _SavedJobsState extends State<SavedJobs> {
                     itemBuilder: (context, index) {
                       return Container(
                         width: double.infinity,
-                        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           boxShadow: [

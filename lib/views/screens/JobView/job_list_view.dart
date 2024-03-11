@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: customizedAppBar(title: '').header(context),
+      appBar: customizedAppBar(title: 'SimplyHired').header(context),
       drawer: CustomizedAppplicantDrawer(),
       body: SingleChildScrollView(
         child: Column(
@@ -50,14 +50,10 @@ class HomeScreen extends StatelessWidget {
                                 title: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      'Hey Good Day',
-                                      style: Theme.of(context).textTheme.labelMedium!.apply(color: Colors.grey),
-                                    ),
-                                    Text(
-                                      'Sachithra Madhushan',
-                                      style: Theme.of(context).textTheme.headlineSmall!.apply(color: Colors.white),
-                                    )
+                                    // Text(
+                                    //   'Hi Sachithra',
+                                    //   style: Theme.of(context).textTheme.headlineSmall!.apply(color: Colors.white),
+                                    // )
                                   ],
                                 ),
                                 actions: [
@@ -143,7 +139,6 @@ class VerticalImageStack extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis
                                     ),
                                 ),
-
                   ],
                 ),
               );
@@ -181,8 +176,6 @@ class SectionHeading extends StatelessWidget {
     );
   }
 }
-
-
 
 class SearchContainer extends StatelessWidget {
   const SearchContainer({
@@ -231,9 +224,6 @@ class SearchContainer extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class clipPath extends StatelessWidget {
   const clipPath({

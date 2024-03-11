@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jobapp/views/screens/JobView/job_detailed_view.dart';
 import 'package:jobapp/views/screens/JobView/job_list_view.dart';
 import 'package:jobapp/views/screens/main_screen.dart';
 
@@ -15,13 +16,16 @@ import 'package:jobapp/views/screens/profile.dart';
 import 'package:jobapp/views/screens/qualification.dart';
 import 'package:jobapp/views/screens/register.dart';
 import 'package:jobapp/views/screens/savedJobs.dart';
+import 'package:jobapp/views/screens/selectJobRole.dart';
 import 'package:provider/provider.dart';
 import 'controllers/job_view.dart';
 import 'package:jobapp/views/screens/skills.dart';
 import 'package:jobapp/views/screens/workExperience.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPreferences.getInstance();
   runApp(
     ChangeNotifierProvider(
       create: (context) => NavigationController(),
@@ -45,18 +49,22 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) =>  LoginPage(),
         '/main': (context) =>  MainScreen(),
-        '/signup': (context) =>  register(),
+        '/jobrole': (context) =>  SelectRole(),
+        '/signupEmployer': (context) =>  register( role: 'employer',), //[jobApplicant, employer]
+        '/signupApplicant': (context) =>  register( role: 'jobApplicant',),
         '/profile': (context) =>  profile(),
         '/aboutMe': (context) =>  aboutMe(isEditable: false,),
         '/workExperience': (context) =>  Experience(),
         '/education': (context) =>  Education(),
         '/skills': (context) =>  Skills(),
         '/qualification': (context) =>  Qualification(),
+        '/jonApplicantHome': (context) =>  HomeScreen(),
         '/employerHome': (context) =>  EmployerHome(),
         '/createJob': (context) =>  CreateJob(),
         '/jobApplication': (context) =>  applicationSubmission(),
         '/savedJobs': (context) =>  SavedJobs(),
         '/applicantHome': (context) =>  HomeScreen(),
+        '/jobDetail': (context) =>  JobDetailView(),
       }
     );
   }

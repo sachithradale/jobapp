@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jobapp/views/common/colors.dart';
 import 'package:jobapp/views/common/fonts.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../common/buttons.dart';
 import '../common/header.dart';
 import 'aboutMe.dart';
@@ -15,10 +15,18 @@ class profile extends StatefulWidget {
 
 class _profileState extends State<profile> {
   @override
+  void initState(){
+    checkJobRole();
+    super.initState();
+  }
+
+  String? userRole;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: customizedAppBar(title: '').header(context),
-      drawer: CustomizedDrawer(),
+      drawer:userRole == 'employer' ? CustomizedEmployeeDrawer() : CustomizedAppplicantDrawer(),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -244,5 +252,13 @@ class _profileState extends State<profile> {
         ),
       ),
     );
+  }
+
+  Future<void> checkJobRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userRole = prefs.getString('userRole');
+      print(userRole);
+    });
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:jobapp/views/common/buttons.dart';
 import 'package:provider/provider.dart';
 import '../../../controllers/job_view.dart';
 import '../../../main.dart';
@@ -88,12 +89,9 @@ class JobDetailView extends StatelessWidget {
               style: TextStyle(fontSize: 16.0),
             ),
             SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                // Apply now logic
-              },
-              child: Text('Apply Now'),
-            ),
+            Button.formButtton('Apply Now', () {
+              Navigator.pushNamed(context, '/jobApplication');
+            }, 200),
           ],
         ),
       ),

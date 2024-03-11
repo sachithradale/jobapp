@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
 import '../common/buttons.dart';
 import '../common/colors.dart';
 import '../common/fonts.dart';
 import '../common/textField.dart';
 
 class register extends StatefulWidget {
-  const register({super.key});
+  const register({super.key, required this.role});
+  final String role;
 
   @override
   State<register> createState() => _registerState();
@@ -40,11 +41,18 @@ class _registerState extends State<register> {
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextFields.textField('Password', Icons.lock, true, passwordController)
               ),
+              SizedBox(height: 10,),
+              Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: TextFields.textField('Confirm Password', Icons.lock, true, passwordController)
+              ),
               SizedBox(height: 20,),
               Button.formButtton('Sign Up',
-                      () =>{
-                    Navigator.pushNamed(context, '/register')
-                  }, MediaQuery.of(context).size.width * 0.8),
+                      () {
+                      //ToDo:Register function here
+                        Navigator.pushNamed(context, '/login');
+                  }
+                  , MediaQuery.of(context).size.width * 0.8),
               SizedBox(height: 10,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -3,8 +3,8 @@ import 'package:jobapp/views/common/fonts.dart';
 import 'package:jobapp/views/common/header.dart';
 import 'package:jobapp/views/common/colors.dart';
 import 'package:jobapp/views/common/textField.dart';
-
 import '../common/buttons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
   TextEditingController emailController = TextEditingController();
@@ -33,12 +33,16 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 20,),
               Button.formButtton('Login',
-                      () =>{
+                      () async =>{
+                        //Todo: Add login functionality
+                        setData(),
                         Navigator.pushNamed(context, '/main')
                       }, MediaQuery.of(context).size.width * 0.8),
               SizedBox(height: 10,),
               Button.formButtton('Employee Login',
                       () =>{
+                    //Todo: Add login functionality
+                    setDataEmployer(),
                     Navigator.pushNamed(context, '/employerHome')
                   }, MediaQuery.of(context).size.width * 0.8),
               SizedBox(height: 10,),
@@ -54,7 +58,7 @@ class LoginPage extends StatelessWidget {
                   AppFonts.customizeText('Don''t have an account?',AppColor.textColor, 12, FontWeight.normal),
                   Button.textButton('Sign Up',
                           () {
-                            Navigator.pushNamed(context, '/job');
+                            Navigator.pushNamed(context, '/jobrole');
                           },12
                   ),
                 ],
@@ -64,5 +68,15 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  setData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('userRole', 'jobApplicant');
+  }
+
+  setDataEmployer() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('userRole', 'employer');
   }
 }
