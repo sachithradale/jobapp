@@ -6,9 +6,10 @@ import 'package:provider/provider.dart';
 
 import '../../../controllers/job_view.dart';
 import '../../../main.dart';
-import '../../common/JobView/job_card_vertical.dart';
+
 import '../../common/JobView/appbar.dart';
 import '../../common/JobView/curved_edges.dart';
+import '../../common/JobView/job_card_vertical.dart';
 
 
 
@@ -27,7 +28,7 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.blueAccent,
                 padding: const EdgeInsets.all(0),
                 child: SizedBox(
-                  height: 200,
+                  height: 210,
                   child: Stack(
                     children: [
                       Positioned(
