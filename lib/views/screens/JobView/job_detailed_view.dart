@@ -6,6 +6,9 @@ import '../../../models/request/job_response.dart';
 
 
 
+import '../../../main.dart';
+import '../../common/buttons.dart';
+
 class JobDetailView extends StatelessWidget {
 
 
@@ -122,12 +125,9 @@ class JobDetailView extends StatelessWidget {
               },
             ),
             SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                // Apply now logic
-              },
-              child: Text('Apply Now'),
-            ),
+            Button.formButtton('Apply Now', () {
+              Navigator.pushNamed(context, '/jobApplication');
+            }, 200),
           ],
         ),
       ),

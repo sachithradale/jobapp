@@ -65,6 +65,8 @@ class AppFonts {
         fontWeight: weight,
         color: color??Colors.black,
       ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
     );
   }
 

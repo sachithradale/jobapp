@@ -1,18 +1,68 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:jobapp/views/common/fonts.dart';
-import 'package:jobapp/views/common/header.dart';
-import 'package:jobapp/views/common/colors.dart';
-import 'package:jobapp/views/common/textField.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../common/buttons.dart';
+import '../common/colors.dart';
+import '../common/fonts.dart';
+import '../common/textField.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  Future<void> _login() async {
+    final String email = emailController.text.trim();
+    final String password = passwordController.text.trim();
+
+    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/auth/signin');
+    final response = await http.post(
+      url,
+      body: {
+        'email': email,
+        'password': password,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Login successful
+      final responseData = json.decode(response.body);
+
+      // Save token to shared preferences
+      final Map<dynamic, dynamic> user = responseData['data'];
+
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('user', json.encode(user));
+
+      Navigator.pushNamed(context, '/homeScreen');
+    } else {
+      // Login failed
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Login failed: ${response.body}'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: customizedAppBar(title: 'Welcome').header(context),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -23,39 +73,29 @@ class LoginPage extends StatelessWidget {
               AppFonts.subtitle('Login to continue', AppColor.textColor),
               SizedBox(height: 20,),
               Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: TextFields.textField('Email', Icons.email, false, emailController)
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: TextFields.textField('Email', Icons.email, false, emailController),
               ),
               SizedBox(height: 10,),
               Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: TextFields.textField('Password', Icons.lock, true, passwordController)
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: TextFields.textField('Password', Icons.lock, true, passwordController),
               ),
               SizedBox(height: 20,),
-              Button.formButtton('Login',
-                      () =>{
-                        Navigator.pushNamed(context, '/profile')
-                      }, MediaQuery.of(context).size.width * 0.8),
+              Button.formButtton('Login', _login, MediaQuery.of(context).size.width * 0.8),
               SizedBox(height: 10,),
-              Button.formButtton('Employee Login',
-                      () =>{
-                    Navigator.pushNamed(context, '/employerHome')
-                  }, MediaQuery.of(context).size.width * 0.8),
-              SizedBox(height: 10,),
-              SizedBox(height: 10,),
-              Button.formButtton('job Application',
-                      () =>{
-                    Navigator.pushNamed(context, '/jobApplication')
-                  }, MediaQuery.of(context).size.width * 0.8),
+              Button.formButtton('job Application', () => Navigator.pushNamed(context, '/jobApplication'), MediaQuery.of(context).size.width * 0.8),
               SizedBox(height: 10,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  AppFonts.customizeText('Don''t have an account?',AppColor.textColor, 12, FontWeight.normal),
-                  Button.textButton('Sign Up',
+                  AppFonts.customizeText('Don''t have an account?', AppColor.textColor, 12, FontWeight.normal),
+                  Button.textButton(
+                      'Sign Up',
                           () {
-                            Navigator.pushNamed(context, '/job');
-                          },12
+                        Navigator.pushNamed(context, '/register');
+                      },
+                      12
                   ),
                 ],
               )

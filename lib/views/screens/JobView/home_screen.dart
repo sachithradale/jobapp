@@ -6,10 +6,10 @@ import 'package:provider/provider.dart';
 
 import '../../../controllers/job_view.dart';
 import '../../../main.dart';
-
+import '../../common/JobView/job_card_vertical.dart';
 import '../../common/JobView/appbar.dart';
 import '../../common/JobView/curved_edges.dart';
-import '../../common/JobView/job_card_vertical.dart';
+import '../../common/header.dart';
 
 
 
@@ -20,6 +20,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: customizedAppBar(title: 'SimplyHired').header(context),
+      drawer: CustomizedAppplicantDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -28,7 +30,7 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.blueAccent,
                 padding: const EdgeInsets.all(0),
                 child: SizedBox(
-                  height: 210,
+                  height: 200,
                   child: Stack(
                     children: [
                       Positioned(
@@ -44,31 +46,24 @@ class HomeScreen extends StatelessWidget {
                       Container(
                         width: screenWidth,
                         child: Column(
-                            children:[
-                              JAppBar(
-                                showBackArrow: false,
-                                title: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Hey Good Day',
-                                      style: Theme.of(context).textTheme.labelMedium!.apply(color: Colors.grey),
-                                    ),
-                                    Text(
-                                      'Sachithra',
-                                      style: Theme.of(context).textTheme.headlineSmall!.apply(color: Colors.white),
-                                    )
-                                  ],
+                            children : [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal:17.0,vertical: 8.0),
+                                child: Container(
+                                width: MediaQuery.of(context).size.width, // Set width to screen width
+                                child: Text(
+                                  'Find Your Dream Job',
+                                  style: TextStyle(
+                                    fontSize: 30.0, // Custom font size
+                                    fontWeight: FontWeight.bold, // Bold font weight
+                                    color: Colors.white, // White text color
+                                  ),
+                                  softWrap: true, // Enable automatic wrapping
+                                  overflow: TextOverflow.visible, // Show overflowed text
                                 ),
-                                actions: [
-                                  IconButton(
-                                    onPressed: (){},
-                                    icon: const Icon(Iconsax.message, color: Colors.white),
-                                  )
-                                ],
+                                                            ),
                               ),
-                              SearchContainer(screenWidth: screenWidth , text:'Seach..'),
-
+                              SearchContainer(screenWidth: screenWidth , text:'Search..'),
                             ]
                         ),
                       ),
@@ -78,8 +73,32 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             Padding(
-                padding: EdgeInsets.all(10.0),
-                child : JobListView()
+                padding: EdgeInsets.all(1.0),
+                child : Column(
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.symmetric(horizontal:25.0,vertical: 8.0),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width, // Set width to screen width
+                          child: Text(
+                            'All Jobs',
+                            style: TextStyle(
+                              fontSize: 20.0, // Custom font size
+                              fontWeight: FontWeight.bold, // Bold font weight
+                              color: Colors.grey, // White text color
+                            ),
+                            softWrap: true, // Enable automatic wrapping
+                            overflow: TextOverflow.visible, // Show overflowed text
+                          ),
+                        ),
+                      ),
+                      Container(
+                        // width:MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.6,
+                        child: JobListView()
+                    ),
+                  ],
+                )
             )
           ],
         ),
@@ -88,97 +107,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class VerticalImageStack extends StatelessWidget {
-  const VerticalImageStack({
-    super.key,
-    required this.image,
-    required this.title,
-    this.textColor = Colors.white,
-    this.backgroundColor,
-    this.onTap,
-  });
-
-  final String image,title;
-  final Color textColor;
-  final Color? backgroundColor;
-  final void Function()? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.only(left:16 , right: 16),
-        child: SizedBox(
-          height: 80,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: 9,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (_,index){
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      padding: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color:textColor,
-                        borderRadius: BorderRadius.circular(100)
-                      ),
-                      child: Center(
-                           child: Image(image:AssetImage(image),fit:BoxFit.cover,color:Colors.black)
-                        )
-                    ),
-                    const SizedBox(height: 5),
-                    SizedBox(
-                        width: 55,
-                        child: Text(title,
-                                    style: Theme.of(context).textTheme.labelMedium!.apply(color:textColor),
-                                    maxLines:1,
-                                    overflow: TextOverflow.ellipsis
-                                    ),
-                                ),
-
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SectionHeading extends StatelessWidget {
-
-  const SectionHeading({
-    super.key,
-    this.onPressed ,
-    this.textColor,
-    this.buttonTitle='View all',
-    required this.title,
-    this.showActionButton = false
-  });
-
-  final Color? textColor;
-  final bool showActionButton;
-  final String title, buttonTitle;
-  final void Function()? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(title, style : Theme.of(context).textTheme.headlineSmall!.apply(color:textColor), maxLines: 1, overflow: TextOverflow.ellipsis,),
-        if(showActionButton) TextButton(onPressed: (){}, child: Text(buttonTitle))
-      ],
-    );
-  }
-}
 
 
 
@@ -221,7 +149,9 @@ class SearchContainer extends StatelessWidget {
             ),
             IconButton(
               icon: Icon(Icons.filter_list),
-              onPressed: () => {controller.setSelectedIndex(1)},
+              onPressed: () {
+                Navigator.pushNamed(context, '/filterJob');
+              },
             ),
           ],
         ),

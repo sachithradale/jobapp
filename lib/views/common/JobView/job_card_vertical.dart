@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jobapp/models/request/job_response.dart';
 import 'package:provider/provider.dart';
@@ -5,12 +6,12 @@ import 'package:provider/provider.dart';
 import '../../../controllers/jobs_provider.dart';
 
 
-class ShadowStyle {
+class ShadowStyle{
   static final verticalJobShadow = BoxShadow(
     color: Colors.grey.withOpacity(0.1),
     blurRadius: 50,
     spreadRadius: 7,
-    offset: const Offset(0, 2),
+    offset: const Offset(0,2)
   );
 }
 
@@ -146,6 +147,7 @@ class JobCardVertical extends StatelessWidget {
           ],
         ),
       ),
+
     );
   }
   String _formatSalary(int low, int high, String currency) {

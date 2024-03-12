@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:jobapp/views/common/colors.dart';
 import 'package:provider/provider.dart';
 import '../../../controllers/job_view.dart';
+import '../../common/buttons.dart';
 
 class FilterPage extends StatefulWidget {
   @override
@@ -28,7 +30,9 @@ class _FilterPageState extends State<FilterPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => {controller.setSelectedIndex(0)},
+          onPressed: () {
+      Navigator.pushNamed(context, '/homeScreen');
+      },
         ),
         title: Text('Filter'),
       ),
@@ -82,6 +86,7 @@ class _FilterPageState extends State<FilterPage> {
             ),
             SizedBox(height: 10.0),
             RangeSlider(
+              activeColor: AppColor.primaryColor,
               values: _salaryRange,
               min: 0,
               max: 100000, // Adjust max salary according to your needs
@@ -92,8 +97,8 @@ class _FilterPageState extends State<FilterPage> {
               },
               divisions: 20,
               labels: RangeLabels(
-                '\$${_salaryRange.start.round()}',
-                '\$${_salaryRange.end.round()}',
+                'LKR${_salaryRange.start.round()}',
+                'LKR${_salaryRange.end.round()}',
               ),
             ),
             SizedBox(height: 20.0),
@@ -113,22 +118,7 @@ class _FilterPageState extends State<FilterPage> {
               }).toList(),
             ),
             SizedBox(height: 90.0),
-            ElevatedButton(
-              onPressed: () {
-                // Apply filters logic
-              },
-              child: Text('Apply Filters'),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.pressed)) {
-                      return Colors.grey.shade50;
-                    }
-                    return Colors.grey;
-                  },
-                ),
-              ),
-            ),
+            Button.formButtton('Apply Filters', () {}, 200),
           ],
         ),
       ),
