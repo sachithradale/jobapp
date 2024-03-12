@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../views/screens/JobView/filter_view.dart';
 import '../views/screens/JobView/job_detailed_view.dart';
-import '../views/screens/JobView/job_list_view.dart';
+import '../views/screens/JobView/home_screen.dart';
 import '../views/screens/savedJobs.dart';
 
 class NavigationController extends ChangeNotifier {

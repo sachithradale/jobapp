@@ -30,7 +30,9 @@ class _FilterPageState extends State<FilterPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => {controller.setSelectedIndex(0)},
+          onPressed: () {
+      Navigator.pushNamed(context, '/homeScreen');
+      },
         ),
         title: Text('Filter'),
       ),

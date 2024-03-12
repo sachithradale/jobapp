@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:jobapp/models/request/job_response.dart';
+import 'package:provider/provider.dart';
 
-import 'rounded_container.dart';
+import '../../../controllers/jobs_provider.dart';
+
 
 class ShadowStyle{
   static final verticalJobShadow = BoxShadow(
@@ -12,51 +15,31 @@ class ShadowStyle{
   );
 }
 
-class Job {
-  final String title;
-  final String location;
-  final List<String> tags;
-  final double lowersalary;
-  final double uppersalary;
-  final String imageUrl;
-
-  Job({
-    required this.title,
-    required this.location,
-    required this.tags,
-    required this.lowersalary,
-    required this.uppersalary,
-    required this.imageUrl,
-  });
-}
-
 class JobCardVertical extends StatelessWidget {
-  final Job job;
+  final JobsResponse job;
 
   const JobCardVertical({Key? key, required this.job}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/jobDetail');
-      },
-      child: Container(
-        width: double.infinity,
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: BoxDecoration(
+        boxShadow: [
+          ShadowStyle.verticalJobShadow,
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(16.0),
+        color: Colors.white,
+      ),
+      child: Padding(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: Offset(0, 3),
-            ),
-          ],
-          borderRadius: BorderRadius.circular(16.0),
-          color: Colors.white,
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -66,7 +49,7 @@ class JobCardVertical extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
-                    job.imageUrl,
+                    job.employer.image,
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
@@ -82,43 +65,81 @@ class JobCardVertical extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
                       ),
                       SizedBox(height: 8),
                       Text(
                         job.location,
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                        ),
                       ),
                     ],
                   ),
                 ),
-                GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/savedJobs');
-                    },
-                    child: Icon(Icons.bookmark))
+                Icon(Icons.bookmark),
               ],
             ),
             SizedBox(height: 16),
             Row(
               children: [
-                Row(
-                  children: job.tags
-                      .map((tag) => _buildTag(tag))
-                      .toList(), // Map each tag to a widget
+                Text(
+                  'Salary:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
-                SizedBox(width: 30),
+                SizedBox(width: 8),
+                Text(
+                  _formatSalary(job.salaryRange.low.toInt(), job.salaryRange.high.toInt(), job.salaryRange.currency),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
               ],
             ),
+            SizedBox(height: 16),
+            Text(
+              'Description:',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              job.description,
+              style: TextStyle(
+                color: Colors.grey[800],
+              ),
+            ),
+            SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  'LKR ${job.lowersalary.toInt()}-${job.uppersalary.toInt()}/Mo',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                ElevatedButton(
+                  onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/jobDetailedView',
+                        arguments: job,
+                      );},
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    ),
+                  child: Text(
+                    'View',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
@@ -126,64 +147,48 @@ class JobCardVertical extends StatelessWidget {
           ],
         ),
       ),
+
     );
   }
-
-  Widget _buildTag(String text) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      margin: EdgeInsets.symmetric(horizontal: 2, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(color: Colors.white),
-      ),
-
-    );
+  String _formatSalary(int low, int high, String currency) {
+    return '$currency ${low.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} - ${high.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}/mo';
   }
 }
 
 class JobListView extends StatelessWidget {
-  final List<Job> jobs = [
-    Job(
-      title: 'Junior Developer',
-      location: 'Code-space-Colombo-Srilanka',
-      tags: ['Remote', 'Full Time'],
-      lowersalary: 8000,
-      uppersalary: 150000,
-      imageUrl: 'https://firebasestorage.googleapis.com/v0/b/physics-book-15c4d.appspot.com/o/download%20(1).png?alt=media&token=d32986bb-9ed8-4f0d-8e0a-21592cea9d5d',
-    ),
-    // Add more jobs here
-    Job(
-      title: 'Senior Developer',
-      location: 'Tech Hub - New York, USA',
-      tags: ['On-site', 'Part Time'],
-      lowersalary: 12000,
-      uppersalary: 200000,
-      imageUrl: 'https://firebasestorage.googleapis.com/v0/b/physics-book-15c4d.appspot.com/o/download%20(1).png?alt=media&token=d32986bb-9ed8-4f0d-8e0a-21592cea9d5d',
-    ),
-    Job(
-      title: 'UI/UX Designer',
-      location: 'Design Studio - Paris, France',
-      tags: ['Remote', 'Contract'],
-      lowersalary: 10000,
-      uppersalary: 150000,
-      imageUrl: 'https://firebasestorage.googleapis.com/v0/b/physics-book-15c4d.appspot.com/o/download%20(1).png?alt=media&token=d32986bb-9ed8-4f0d-8e0a-21592cea9d5d',
-    ),
-    // Add more jobs as needed
-  ];
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      physics: BouncingScrollPhysics(),
-      itemCount: jobs.length,
-      itemBuilder: (BuildContext context, int index) {
-        return JobCardVertical(job: jobs[index]);
+    return Consumer<JobNotifier>(
+      builder: (context, jobsNotifier, child) {
+        jobsNotifier.getJobs();
+        return SizedBox(
+          height: 500,
+          child: FutureBuilder<List<JobsResponse>>(
+            future: jobsNotifier.jobList,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator.adaptive());
+              } else if (snapshot.hasError) {
+                return Text("Errorsssss: ${snapshot.error}");
+              } else if (snapshot.data!.isEmpty) {
+                return const Text("No jobs available");
+              } else {
+                final jobs = snapshot.data;
+                return ListView.builder(
+                  itemCount: jobs!.length,
+                  itemBuilder: (context, index) {
+                    var job = jobs[index];
+                    return JobCardVertical(job:job);
+                  },
+                );
+              }
+            },
+          ),
+        );
       },
     );
   }
 }
+
+

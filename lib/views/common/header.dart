@@ -8,7 +8,7 @@ class customizedAppBar{
   AppBar header(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.blueAccent,
-      title: AppFonts.heading(
+      title: AppFonts.subtitle(
           title,
           Colors.white,
       ),

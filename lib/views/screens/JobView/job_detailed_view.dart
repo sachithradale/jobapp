@@ -1,20 +1,31 @@
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:jobapp/views/common/buttons.dart';
 import 'package:provider/provider.dart';
 import '../../../controllers/job_view.dart';
+import '../../../models/request/job_response.dart';
+
+
+
 import '../../../main.dart';
+import '../../common/buttons.dart';
 
 class JobDetailView extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
+    final JobsResponse job = ModalRoute.of(context)!.settings.arguments as JobsResponse;
+    print(job);
     final controller = Provider.of<NavigationController>(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => {controller.setSelectedIndex(0)},
+          onPressed: () => {
+            Navigator.pushNamed(
+                context,
+                '/homeScreen',
+          )},
         ),
         title: Text('Job Details'),
       ),
@@ -26,25 +37,32 @@ class JobDetailView extends StatelessWidget {
             Row(
               children: [
                 // Add company logo widget here
-                Container(
+                Image.network(
+                  job.employer.image,
                   width: 80,
                   height: 80,
-                  // Placeholder for company logo
-                  color: Colors.grey,
+                  fit: BoxFit.cover,
                 ),
                 SizedBox(width: 20.0),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Job Position',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
+                    Container(
+                      width: 200, // Set your desired width here
+                      child: Expanded(
+                        child: Text(
+                          job.title,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 2, // Limit the maximum number of lines to 2
+                          overflow: TextOverflow.ellipsis, // Show ellipsis (...) if the text overflows
+                        ),
                       ),
                     ),
-                    Text('Company Name'),
-                    Text('Location'),
+                    Text("ABC company"),
+                    Text(job.location),
                   ],
                 ),
               ],
@@ -59,7 +77,7 @@ class JobDetailView extends StatelessWidget {
             ),
             SizedBox(height: 10.0),
             Text(
-              'Job description content goes here...',
+              job.description,
               style: TextStyle(fontSize: 16.0),
             ),
             SizedBox(height: 20.0),
@@ -71,22 +89,40 @@ class JobDetailView extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10.0),
-            Text(
-              'Job requirements content goes here...',
-              style: TextStyle(fontSize: 16.0),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: job.requirements.length,
+              itemBuilder: (context, index) {
+                return Text(
+                  job.requirements[index],
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.grey[800],
+                  ),
+                );
+              },
             ),
             SizedBox(height: 20.0),
             Text(
-              'About Company',
+              'Responsibilities',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 10.0),
-            Text(
-              'About company content goes here...',
-              style: TextStyle(fontSize: 16.0),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: job.responsibilities.length,
+              itemBuilder: (context, index) {
+                return Text(
+                  job.responsibilities[index],
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.grey[800],
+                  ),
+                );
+              },
             ),
             SizedBox(height: 20.0),
             Button.formButtton('Apply Now', () {
