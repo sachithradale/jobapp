@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,11 +19,16 @@ class _SplashScreenState extends State<SplashScreen> {
     final prefs = await SharedPreferences.getInstance();
     final String? user = prefs.getString('user');
 
-
-
     if (user != null) {
-      // User ID exists, navigate to home or other screen
-      Navigator.pushReplacementNamed(context, '/homeScreen');
+      final data = json.decode(user!);
+      print(data);
+      var userRole = data['role'];
+      print(userRole);
+      if(userRole == 'employer') {
+        Navigator.pushNamed(context, '/employerHome');
+      } else {
+        Navigator.pushNamed(context, '/jonApplicantHome');
+      }
     } else {
       // User ID doesn't exist, navigate to login screen
       Navigator.pushReplacementNamed(context, '/login');

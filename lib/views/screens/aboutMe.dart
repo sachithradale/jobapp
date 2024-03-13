@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'dart:typed_data';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jobapp/views/common/buttons.dart';
@@ -9,6 +10,7 @@ import '../common/colors.dart';
 import '../common/header.dart';
 import '../common/textField.dart';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class aboutMe extends StatefulWidget {
   aboutMe({super.key,required this.isEditable});
@@ -24,23 +26,79 @@ class _aboutMeState extends State<aboutMe> {
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
 
-  Map<String,dynamic> userDetails = {
-    'name':'John Fernando',
-    'dob':'1990-01-01',
-    'email':'john@gmail.com',
-    'phone':'458569523'
-  };
+  Map<String,dynamic> userDetails = {};
   List<String> links = ['LinkedIn','Github','Portfolio'];
   List<int> fileBytes = <int>[];
   String? selectedfileName;
+  var token;
+  var userId;
 
   @override
   void initState() {
-    nameController.text = userDetails['name'];
-    dobController.text = userDetails['dob'];
-    emailController.text = userDetails['email'];
-    phoneController.text = userDetails['phone'];
+    getUserDetails();
     super.initState();
+  }
+
+  Future<void> getUserDetails() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+    userId = prefs.getString('id');
+    print('Token: $token');
+    print('User ID: $userId');
+    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/$userId');
+    final response = await http.get(
+      url,
+      headers: <String, String>{
+        'x-access-token': token,
+      },
+    );
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print("Uset get Success");
+      print(responseData);
+      userDetails={
+        'name':responseData['data']['profile']['name'],
+        'dob':responseData['data']['profile']['dob'],
+        'email':responseData['data']['email'],
+        'phone':responseData['data']['profile']['phone'],
+        'links':responseData['data']['profile']['socialLinks'],
+        'qualification':responseData['data']['profile']['qualification'],
+        'workExperience':responseData['data']['profile']['experience'],
+        'education':responseData['data']['profile']['education'],
+      };
+      nameController.text = userDetails['name'];
+      dobController.text = userDetails['dob']!=null?userDetails['dob']:'1990-01-01';
+      emailController.text = userDetails['email'];
+      print(userDetails['email']);
+      phoneController.text = userDetails['phone']!=null?userDetails['phone']:'';
+    } else {
+      print('Failed to load user details');
+    }
+  }
+
+  Future<void> updateUserDetails() async{
+    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/update/$userId');
+    final data = jsonEncode({
+      'name': nameController.text,
+      'dob': dobController.text,
+      'email': emailController.text,
+      'phone': phoneController.text,
+      'socialLinks': links,
+    });
+    final response = await http.put(
+      url,
+      headers: <String, String>{
+        'x-access-token': token,
+      },
+      body: data,
+    );
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print("User Update Success");
+      print(responseData);
+    } else {
+      print('Failed to update user details');
+    }
   }
 
   Future<void> pickFile(StateSetter setState) async {
@@ -178,7 +236,7 @@ class _aboutMeState extends State<aboutMe> {
             () => {
               setState(() {
                 widget.isEditable = false;
-                //Todo: Save the details
+                updateUserDetails();
               })
             }, MediaQuery.of(context).size.width * 0.8):
             Button.formButtton('Edit',
@@ -192,5 +250,15 @@ class _aboutMeState extends State<aboutMe> {
         )
       )
     );
+  }
+
+  getUsername() {
+    SharedPreferences prefs =  SharedPreferences.getInstance() as SharedPreferences;
+    return prefs.getString('token');
+  }
+
+  getUserId() {
+    SharedPreferences prefs =  SharedPreferences.getInstance() as SharedPreferences;
+    return prefs.getString('id');
   }
 }

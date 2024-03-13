@@ -130,7 +130,7 @@ class JobCardVertical extends StatelessWidget {
                         arguments: job,
                       );},
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.blue,
+                    backgroundColor: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),

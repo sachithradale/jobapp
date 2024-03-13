@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jobapp/utils/date.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../common/buttons.dart';
 import '../common/colors.dart';
 import '../common/fonts.dart';
 import '../common/header.dart';
 import '../common/textField.dart';
+import 'package:http/http.dart' as http;
 
 class Experience extends StatefulWidget {
   const Experience({super.key});
@@ -30,6 +31,39 @@ class _ExperienceState extends State<Experience> {
   DateTime? selectedStartDate;
   DateTime? selectedEndDate;
   bool? checkBoxValue;
+  var userId;
+  var token;
+
+  Future<void> AddWorkExperience() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+    userId = prefs.getString('id');
+    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/add/work-experience/$userId');
+    print('Job Title: ${jobTitleController.text}');
+    print('Company: ${companyController.text}');
+    print('Start Date: ${startDateController.text}');
+    print('End Date: ${endDateController.text}');
+    print('Description: ${descriptionController.text}');
+    print(token);
+
+    var response = await http.post(
+        url,
+        headers:{
+        'x-access-token': token,
+        },
+        body: {
+          'jobTitle': jobTitleController.text,
+          'company': companyController.text,
+          'startDate': selectedStartDate?.toIso8601String(),
+          'endDate': selectedEndDate?.toIso8601String(),
+          'description': descriptionController.text,
+          'position': 'Software Engineer',
+        }
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,7 +192,7 @@ class _ExperienceState extends State<Experience> {
               SizedBox(height: 10,),
               Button.formButtton('Save',
                       () => {
-                        //Todo: Save to database
+                        AddWorkExperience()
                       },
               MediaQuery.of(context).size.width * 0.8),
             ]
@@ -168,6 +202,6 @@ class _ExperienceState extends State<Experience> {
   }
 
   String formatDate(DateTime selectedStartDate) {
-    return selectedStartDate.toString().substring(0,10);
+    return "${selectedStartDate.toLocal().year}-${selectedStartDate.toLocal().month}-${selectedStartDate.toLocal().day}";
   }
 }

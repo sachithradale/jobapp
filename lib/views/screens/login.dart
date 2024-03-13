@@ -33,21 +33,39 @@ class _LoginPageState extends State<LoginPage> {
       // Login successful
       final responseData = json.decode(response.body);
 
+      var userRole = responseData['data']['role'];
+      print("User Role: $userRole");
+      var token= responseData['data']['token'];
+      print("Token: $token");
+      var userId=responseData['data']['id'];
+
       // Save token to shared preferences
       final Map<dynamic, dynamic> user = responseData['data'];
 
       final prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', token);
+      prefs.setString('userRole',userRole);
       prefs.setString('user', json.encode(user));
+      prefs.setString('id', userId);
 
-      Navigator.pushNamed(context, '/homeScreen');
+      if(userRole == 'employer') {
+        Navigator.pushNamed(context, '/employerHome');
+      } else {
+        Navigator.pushNamed(context, '/jonApplicantHome');
+      }
     } else {
       // Login failed
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Error'),
-            content: Text('Login failed: ${response.body}'),
+            title: Text(
+                'Error',
+                style: TextStyle(
+                  color: Colors.red
+                )
+            ),
+            content: Text("Username and password does not match"),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),

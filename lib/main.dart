@@ -4,8 +4,6 @@ import 'package:jobapp/views/screens/JobView/home_screen.dart';
 import 'package:jobapp/views/screens/JobView/job_detailed_view.dart';
 import 'package:jobapp/views/screens/index.dart';
 import 'package:jobapp/views/screens/main_screen.dart';
-
-
 import 'package:jobapp/views/common/header.dart';
 import 'package:jobapp/views/screens/aboutMe.dart';
 import 'package:jobapp/views/screens/applicationSubmission.dart';

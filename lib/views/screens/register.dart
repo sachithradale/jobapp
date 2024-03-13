@@ -138,7 +138,9 @@ class _RegisterState extends State<Register> {
                   }).toList(),
                   decoration: InputDecoration(
                     labelText: 'Role',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
