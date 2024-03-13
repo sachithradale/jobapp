@@ -320,7 +320,6 @@ class _SavedJobsState extends State<SavedJobs> {
         text,
         style: TextStyle(color: Colors.white),
       ),
-
     );
   }
 }
