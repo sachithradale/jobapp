@@ -25,18 +25,28 @@ class _aboutMeState extends State<aboutMe> {
   TextEditingController dobController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  TextEditingController linkController = TextEditingController();
 
   Map<String,dynamic> userDetails = {};
   List<String> links = ['LinkedIn','Github','Portfolio'];
   List<int> fileBytes = <int>[];
   String? selectedfileName;
+  List<dynamic> socialLinks=[];
   var token;
   var userId;
 
   @override
-  void initState() {
+  void initState(){
+    getSharedPrefData();
     getUserDetails();
     super.initState();
+  }
+
+  Future<void> getSharedPrefData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      fileBytes=prefs.getString('profilePic')!=null?base64Decode(prefs.getString('profilePic')!):[];
+    });
   }
 
   Future<void> getUserDetails() async {
@@ -56,6 +66,7 @@ class _aboutMeState extends State<aboutMe> {
       final responseData = jsonDecode(response.body);
       print("Uset get Success");
       print(responseData);
+      print(responseData['data']['profile']['socialLinks']);
       userDetails={
         'name':responseData['data']['profile']['name'],
         'dob':responseData['data']['profile']['dob'],
@@ -66,37 +77,72 @@ class _aboutMeState extends State<aboutMe> {
         'workExperience':responseData['data']['profile']['experience'],
         'education':responseData['data']['profile']['education'],
       };
+      userDetails['links'].forEach((element) {
+        socialLinks.add(element.toString());
+      });
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       nameController.text = userDetails['name'];
       dobController.text = userDetails['dob']!=null?userDetails['dob']:'1990-01-01';
       emailController.text = userDetails['email'];
       print(userDetails['email']);
-      phoneController.text = userDetails['phone']!=null?userDetails['phone']:'';
+      phoneController.text = userDetails['phone']!=null?userDetails['phone']:prefs.getString('contact');
+      fileBytes = prefs.getString('profilePic')!=null?base64Decode(prefs.getString('profilePic')!):[];
     } else {
       print('Failed to load user details');
     }
   }
 
   Future<void> updateUserDetails() async{
+    if(phoneController.text.isEmpty){
+      showError("Please enter a Contact Number");
+    }
+    socialLinks.add(linkController.text);
+
     final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/update/$userId');
+    print("Token is: $token");
     final data = jsonEncode({
-      'name': nameController.text,
-      'dob': dobController.text,
-      'email': emailController.text,
-      'phone': phoneController.text,
-      'socialLinks': links,
+        'name': nameController.text,
+        'dob': dobController.text,
+        'contact': phoneController.text,
+        'socialLinks': socialLinks,
     });
-    final response = await http.put(
+    final response = await http.patch(
       url,
-      headers: <String, String>{
-        'x-access-token': token,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': '$token',
       },
       body: data,
     );
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-      print("User Update Success");
-      print(responseData);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('contact', phoneController.text);
+      setState(() {
+        widget.isEditable = false;
+      });
+      linkController.clear();
+      showDialog(context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                  'Success',
+                  style: TextStyle(
+                    color: Colors.green
+                  )
+              ),
+              content: AppFonts.customizeText('User Details Updated Successfully', AppColor.textColor, 14, FontWeight.normal),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+      );
     } else {
+      showError('Failed to update user details');
       print('Failed to update user details');
     }
   }
@@ -120,135 +166,178 @@ class _aboutMeState extends State<aboutMe> {
     }
   }
 
+  Future<void> uploadImage() async {
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+     prefs.setString('profilePic', base64Encode(fileBytes));
+     showDialog(
+         context: context,
+         builder: (BuildContext context) {
+           return AlertDialog(
+             title: Text(
+                 'Success',
+                 style: TextStyle(
+                   color: Colors.green
+                 )
+             ),
+             content: AppFonts.customizeText('Profile Picture Updated Successfully', AppColor.textColor, 14, FontWeight.normal),
+             actions: [
+               TextButton(
+                 onPressed: () => Navigator.pop(context),
+                 child: Text('OK'),
+               ),
+             ],
+           );
+         },
+     );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: customizedAppBar(title: '').header(context),
-      body: SingleChildScrollView(
-        child:Column(
-          children: [
-            Center(child: AppFonts.heading('About me', null)),
-            SizedBox(height: 40,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: fileBytes.isEmpty?AssetImage('assets/images/welcome.jpg'):Image.memory(Uint8List.fromList(fileBytes)).image,
-                ),
-                IconButton(
-                    onPressed: (){
-                      pickFile(setState);
-                    },
-                    icon: Icon(Icons.camera_alt_outlined),
-                )
-              ],
-            ),
-            Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: TextFields.textFieldWithLabel('John Fernando','Full Name',false, nameController,!widget.isEditable)
-            ),
-            SizedBox(height: 20,),
-            Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: TextFields.textFieldWithLabel('1990-01-01','Date of Birth',false, dobController,!widget.isEditable)
-            ),
-            SizedBox(height: 20,),
-            Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: TextFields.textFieldWithLabel('abc@gmail.com','Email',false, emailController,!widget.isEditable)
-            ),
-            SizedBox(height: 20,),
-            Container(
-                width: MediaQuery.of(context).size.width * 0.8,
+    return WillPopScope(
+        onWillPop: () {
+          Navigator.pushNamed(context, '/profile');
+          return Future.value(false);
+        },
+        child: Scaffold(
+            appBar: customizedAppBar(title: '').header(context),
+            body: SingleChildScrollView(
                 child:Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppFonts.customizeText('Phone Number', AppColor.textColor, 12, FontWeight.bold),
+                    Center(child: AppFonts.heading('About me', null)),
+                    SizedBox(height: 40,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage: fileBytes.isEmpty?AssetImage('assets/images/img.png'):Image.memory(Uint8List.fromList(fileBytes)).image,
+                        ),
+                        IconButton(
+                          onPressed: (){
+                            pickFile(setState);
+                          },
+                          icon: Icon(Icons.camera_alt_outlined),
+                        ),
                         Container(
-                            width: MediaQuery.of(context).size.width * 0.15,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: AppFonts.customizeText('+94', AppColor.textColor, 15, FontWeight.bold),
-                            )),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.65,
-                          child: TextFormField(
-                            readOnly: !widget.isEditable,
-                            controller: phoneController,
-                            decoration: InputDecoration(
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: widget.isEditable?BorderSide(color: AppColor.success, width: 2.0):BorderSide(color: AppColor.textColor, width: 1.0),
-                                borderRadius: BorderRadius.circular(10),
+                          width:150,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              uploadImage();
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                AppFonts.customizeText('Upload Image', AppColor.primaryColor, 12, FontWeight.normal),
+                              ],
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                              hintText: '458569523',
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(color: AppColor.textColor, width: 2.0),
-                                borderRadius: BorderRadius.circular(10),
+                              side: BorderSide(
+                                color: AppColor.primaryColor,
                               ),
                             ),
-                            obscureText: false,
                           ),
                         ),
                       ],
                     ),
-                  ],
-                )
-            ),
-            SizedBox(height: 20,),
-            Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child:Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppFonts.customizeText('Links', AppColor.textColor, 12, FontWeight.bold),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: links.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                          title: TextFormField(
-                            readOnly: !widget.isEditable,
-                            decoration: InputDecoration(
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: AppColor.success, width: 2.0),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              hintText: links[index],
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(color: AppColor.textColor, width: 2.0),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            obscureText: false,
-                          )
-                        );
-                      },
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: TextFields.textFieldWithLabel('John Fernando','Full Name',false, nameController,!widget.isEditable)
                     ),
+                    SizedBox(height: 20,),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: TextFields.textFieldWithLabel('1990-01-01','Date of Birth',false, dobController,!widget.isEditable)
+                    ),
+                    SizedBox(height: 20,),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: TextFields.textFieldWithLabel('abc@gmail.com','Email',false, emailController,true)
+                    ),
+                    SizedBox(height: 20,),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child:Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppFonts.customizeText('Phone Number', AppColor.textColor, 12, FontWeight.bold),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                    width: MediaQuery.of(context).size.width * 0.15,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: AppFonts.customizeText('+94', AppColor.textColor, 15, FontWeight.bold),
+                                    )),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * 0.65,
+                                  child: TextFormField(
+                                    readOnly: !widget.isEditable,
+                                    controller: phoneController,
+                                    decoration: InputDecoration(
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: widget.isEditable?BorderSide(color: AppColor.success, width: 2.0):BorderSide(color: AppColor.textColor, width: 1.0),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      hintText: '458569523',
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(color: AppColor.textColor, width: 2.0),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    obscureText: false,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                    ),
+                    SizedBox(height: 20,),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child:Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppFonts.customizeText('Links', AppColor.textColor, 12, FontWeight.bold),
+                            socialLinks!=null?Column(
+                              children: [
+                                for(var link in socialLinks)
+                                  Container(
+                                    width: MediaQuery.of(context).size.width * 0.8,
+                                    child: TextFields.textFieldWithLabel(link,'',false,TextEditingController(),true),
+                                  ),
+                              ],
+                            ):Container(),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              child: TextFields.textFieldWithLabel('Add New Link','',false,linkController,!widget.isEditable),
+                            ),
+                          ],
+                        )
+                    ),
+                    SizedBox(height: 20,),
+                    widget.isEditable?Button.formButtton('Save',
+                            () => {
+                          setState(() {
+                            updateUserDetails();
+                          })
+                        }, MediaQuery.of(context).size.width * 0.8):
+                    Button.formButtton('Edit',
+                            () => {
+                          setState(() {
+                            widget.isEditable = true;
+                          })
+                        }, MediaQuery.of(context).size.width * 0.8),
+                    SizedBox(height: 40,)
                   ],
                 )
-            ),
-            SizedBox(height: 20,),
-            widget.isEditable?Button.formButtton('Save',
-            () => {
-              setState(() {
-                widget.isEditable = false;
-                updateUserDetails();
-              })
-            }, MediaQuery.of(context).size.width * 0.8):
-            Button.formButtton('Edit',
-            () => {
-              setState(() {
-                widget.isEditable = true;
-              })
-            }, MediaQuery.of(context).size.width * 0.8),
-            SizedBox(height: 40,)
-          ],
+            )
         )
-      )
     );
   }
 
@@ -260,5 +349,28 @@ class _aboutMeState extends State<aboutMe> {
   getUserId() {
     SharedPreferences prefs =  SharedPreferences.getInstance() as SharedPreferences;
     return prefs.getString('id');
+  }
+
+  void showError(String error) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+              'Error',
+              style: TextStyle(
+                color: Colors.red
+              )
+          ),
+          content: AppFonts.customizeText(error, AppColor.textColor, 14, FontWeight.normal),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

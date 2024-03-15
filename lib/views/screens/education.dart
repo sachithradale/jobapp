@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/date.dart';
 import '../common/buttons.dart';
 import '../common/colors.dart';
 import '../common/fonts.dart';
 import '../common/header.dart';
 import '../common/textField.dart';
+import 'package:http/http.dart' as http;
 
 class Education extends StatefulWidget {
   const Education({super.key});
@@ -26,6 +27,65 @@ class _EducationState extends State<Education> {
   DateTime? selectedStartDate;
   DateTime? selectedEndDate;
   bool? checkBoxValue;
+  var token;
+  var userId;
+
+  Future<void> uploadEducation() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+    userId = prefs.getString('id');
+    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/add/work-experience/$userId');
+    var data={
+      "institution": schoolController.text,
+      "degree": degreeController.text,
+      "field": fieldOfStudyController.text,
+      "startDate": selectedStartDate?.toIso8601String(),
+      "endDate": selectedEndDate?.toIso8601String(),
+      "description": descriptionController.text,
+    };
+    print(data);
+    var response = await http.post(
+        url,
+        headers:{
+          'x-access-token': token,
+        },
+        body: data
+    );
+    if (response.statusCode == 200) {
+      print('Work Experience Added');
+      //clear the fields
+      schoolController.clear();
+      degreeController.clear();
+      fieldOfStudyController.clear();
+      startDateController.clear();
+      endDateController.clear();
+      descriptionController.clear();
+      checkBoxValue = false;
+      showDialog(context: context,
+          builder:
+              (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                  'Success',
+                  style: TextStyle(
+                      color: Colors.green
+                  )
+              ),
+              content: AppFonts.customizeText('Education Details Added Successfully', AppColor.textColor, 14, FontWeight.normal),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          }
+      );
+    } else {
+      showError('Failed to add Education Details', context);
+      print('Failed to add work experience');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +215,7 @@ class _EducationState extends State<Education> {
                   SizedBox(height: 10,),
                   Button.formButtton('Save',
                           () => {
-                        //Todo: Save to database
+                        uploadEducation()
                       },
                       MediaQuery.of(context).size.width * 0.8),
                 ]
@@ -166,5 +226,28 @@ class _EducationState extends State<Education> {
 
   String formatDate(DateTime dateTime) {
     return '${dateTime.year}-${dateTime.month}-${dateTime.day}';
+  }
+
+  void showError(String s, BuildContext context) {
+    showDialog(context: context,
+        builder:
+            (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+                'Error',
+                style: TextStyle(
+                    color: Colors.red
+                )
+            ),
+            content: AppFonts.customizeText(s, AppColor.textColor, 14, FontWeight.normal),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          );
+        }
+    );
   }
 }

@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:jobapp/views/common/colors.dart';
 import 'package:jobapp/views/common/fonts.dart';
@@ -16,8 +20,51 @@ class profile extends StatefulWidget {
 class _profileState extends State<profile> {
   @override
   void initState(){
+    getName();
     checkJobRole();
+    setprofilepic();
     super.initState();
+  }
+  List<int> profilepic = [];
+  var token;
+  var userId;
+  String name = 'John Doe';
+
+  Future<void> getName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+    userId = prefs.getString('id');
+    print('Token: $token');
+    print('User ID: $userId');
+    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/$userId');
+    final response = await http.get(
+      url,
+      headers: <String, String>{
+        'x-access-token': token,
+      },
+    );
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      print(responseData);
+      setState(() {
+        name = responseData['data']['profile']['name'];
+      });
+    } else {
+      print('Failed to load profile');
+    }
+  }
+
+  Future<void> setprofilepic() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.getString('profilePic') == null){
+      prefs.setString('profilePic', 'assets/images/welcome.png');
+    }else{
+      setState(() {
+        setState(() {
+          profilepic=prefs.getString('profilePic')!=null?base64Decode(prefs.getString('profilePic')!):[];
+        });
+      });
+    }
   }
 
   String? userRole;
@@ -34,10 +81,10 @@ class _profileState extends State<profile> {
             children: [
               CircleAvatar(
                 radius: 50,
-                backgroundImage: AssetImage('assets/images/welcome.jpg'),
+                backgroundImage: profilepic.isEmpty ? AssetImage('assets/images/welcome.jpg') : Image.memory(Uint8List.fromList(profilepic)).image,
                ),
               SizedBox(height: 10,),
-              AppFonts.normal('John Doe', AppColor.textColor),
+              AppFonts.normal(name, AppColor.textColor),
               Container(
                 width:150,
                 child: ElevatedButton(

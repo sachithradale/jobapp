@@ -39,29 +39,55 @@ class _ExperienceState extends State<Experience> {
     token = prefs.getString('token');
     userId = prefs.getString('id');
     final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/add/work-experience/$userId');
-    print('Job Title: ${jobTitleController.text}');
-    print('Company: ${companyController.text}');
-    print('Start Date: ${startDateController.text}');
-    print('End Date: ${endDateController.text}');
-    print('Description: ${descriptionController.text}');
-    print(token);
-
+    var data={
+      'position': jobTitleController.text,
+      'company': companyController.text,
+      'startDate':selectedStartDate?.toIso8601String(),
+      'endDate': selectedEndDate?.toIso8601String(),
+      'description': descriptionController.text,
+      'isCurrent': checkBoxValue.toString(),
+    };
+    print(data);
     var response = await http.post(
         url,
         headers:{
         'x-access-token': token,
         },
-        body: {
-          'jobTitle': jobTitleController.text,
-          'company': companyController.text,
-          'startDate': selectedStartDate?.toIso8601String(),
-          'endDate': selectedEndDate?.toIso8601String(),
-          'description': descriptionController.text,
-          'position': 'Software Engineer',
-        }
+        body: data
     );
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    if (response.statusCode == 200) {
+      print('Work Experience Added');
+      //clear the fields
+      jobTitleController.clear();
+      companyController.clear();
+      startDateController.clear();
+      endDateController.clear();
+      descriptionController.clear();
+      checkBoxValue = false;
+      showDialog(context: context,
+          builder:
+          (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                  'Success',
+                  style: TextStyle(
+                      color: Colors.green
+                  )
+              ),
+              content: AppFonts.customizeText('Work Experience Added Successfully', AppColor.textColor, 14, FontWeight.normal),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          }
+      );
+    } else {
+      showError('Failed to add Work Experience', context);
+      print('Failed to add work experience');
+    }
   }
 
   @override
@@ -203,5 +229,28 @@ class _ExperienceState extends State<Experience> {
 
   String formatDate(DateTime selectedStartDate) {
     return "${selectedStartDate.toLocal().year}-${selectedStartDate.toLocal().month}-${selectedStartDate.toLocal().day}";
+  }
+
+  void showError(String s, BuildContext context) {
+    showDialog(context: context,
+        builder:
+            (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+                'Error',
+                style: TextStyle(
+                    color: Colors.red
+                )
+            ),
+            content: AppFonts.customizeText(s, AppColor.textColor, 14, FontWeight.normal),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          );
+        }
+    );
   }
 }

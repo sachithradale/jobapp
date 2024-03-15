@@ -51,8 +51,12 @@ class CustomizedEmployeeDrawer extends StatelessWidget {
           ListTile(
             title: AppFonts.normal('Logout', Colors.red),
             onTap: () async {
+              //clear shared preference
               SharedPreferences prefs = await SharedPreferences.getInstance();
               prefs.remove('userRole');
+              prefs.remove('token');
+              prefs.remove('user');
+              prefs.remove('userId');
               Navigator.pushNamed(context, '/login');
             },
           ),
@@ -104,10 +108,11 @@ class CustomizedAppplicantDrawer extends StatelessWidget {
           ListTile(
             title: AppFonts.normal('Logout', Colors.red),
             onTap: () async {
-              //Todo: Add logout functionality
-              //set shared preference to null
               SharedPreferences prefs = await SharedPreferences.getInstance();
               prefs.remove('userRole');
+              prefs.remove('token');
+              prefs.remove('user');
+              prefs.remove('userId');
               Navigator.pushNamed(context, '/login');
             },
           ),

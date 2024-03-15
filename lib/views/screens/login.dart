@@ -102,8 +102,6 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 20,),
               Button.formButtton('Login', _login, MediaQuery.of(context).size.width * 0.8),
               SizedBox(height: 10,),
-              Button.formButtton('job Application', () => Navigator.pushNamed(context, '/jobApplication'), MediaQuery.of(context).size.width * 0.8),
-              SizedBox(height: 10,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

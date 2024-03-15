@@ -1,13 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:jobapp/views/common/dropDown.dart';
 import 'package:jobapp/views/common/header.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../common/buttons.dart';
 import '../common/fonts.dart';
 import '../common/textField.dart';
+import 'package:http/http.dart' as http;
 
 class CreateJob extends StatefulWidget {
   const CreateJob({super.key});
@@ -58,9 +61,77 @@ class _CreateJobState extends State<CreateJob> {
 
   double _minSalary = 5000;
   double _maxSalary = 1000000;
-
   int _currentPage = 0;
   final int _numPages = 4; // Set the total number of pages
+
+  var token;
+  var userId;
+
+  Future<void> createJob() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+    print(token);
+    userId = prefs.getString('id');
+    List<String> requirements = requirementsController.text.split(',');
+    List<String> responsibilities = responsibilitiesController.text.split(',');
+    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/job/create');
+    var data={
+      "title": positionController.text,
+      "description": jobDescriptionController.text,
+      "requirements": requirements,
+      "responsibilities": responsibilities,
+      "location": _selectedLocation,
+      "salaryRange": {
+        "low": _minSalary,
+        "high": _maxSalary,
+        "currency": "LKR"
+      }
+    };
+    print(data);
+    var response = await http.post(
+        url,
+        body: jsonEncode(data),
+        headers: {
+          'x-access-token': token,
+        }
+    );
+    if(response.statusCode == 200){
+      showDialog(context: context,
+          builder: (BuildContext context){
+            return AlertDialog(
+              title: AppFonts.customizeText('Success', Colors.green, 18, FontWeight.bold),
+              content: AppFonts.customizeText('Your job has been created successfully', Colors.black, 16, FontWeight.normal),
+              actions: [
+                Button.formButtton('OK', () => {
+                  Navigator.pop(context),
+                  Navigator.pop(context)
+                }, MediaQuery.of(context).size.width * 0.6)
+              ],
+            );
+          }
+      );
+      print('Job Created');
+    }else{
+      print(response.body);
+      print(response.statusCode);
+      showDialog(context: context,
+          builder: (BuildContext context){
+            return AlertDialog(
+              title: AppFonts.customizeText('Error', Colors.red, 18, FontWeight.bold),
+              content: AppFonts.customizeText('An error occurred while creating the job', Colors.black, 16, FontWeight.normal),
+              actions: [
+                Button.formButtton('OK', () => {
+                  Navigator.pop(context)
+                }, MediaQuery.of(context).size.width * 0.6)
+              ],
+            );
+          }
+      );
+      print('Job not created');
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -357,8 +428,7 @@ class _CreateJobState extends State<CreateJob> {
                                   SizedBox(height: 20),
                                   Button.formButtton('Post Job',
                                           () => {
-                                           //ToDo: Post Job to the database
-                                            Navigator.pushNamed(context, '/employerHome')
+                                           createJob()
                                           }
                                   , MediaQuery.of(context).size.width * 0.8),
                                   SizedBox(height: 20),
