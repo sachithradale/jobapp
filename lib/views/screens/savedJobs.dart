@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../controllers/saved_jobs_provider.dart';
+import '../../models/request/job_response.dart';
+import '../common/JobView/job_card_vertical.dart';
 import '../common/buttons.dart';
 import '../common/fonts.dart';
 import '../common/header.dart';
@@ -13,60 +17,12 @@ class SavedJobs extends StatefulWidget {
 class _SavedJobsState extends State<SavedJobs> {
   TextEditingController searchController = TextEditingController();
 
-  List<Map<String,dynamic>> jobDetails =[
-    //position,jobtype,workplace,location,salary lower,salary upper
-    {
-      'position': 'Software Developer',
-      'jobtype': 'Full Time',
-      'workplace': 'On-Site',
-      'location': 'CodeSphere-Colombo,Sri Lanka',
-      'salaryLower': 5000,
-      'salaryUpper': 15000,
-      'imageUrl':'https://firebasestorage.googleapis.com/v0/b/physics-book-15c4d.appspot.com/o/download%20(1).png?alt=media&token=d32986bb-9ed8-4f0d-8e0a-21592cea9d5d',
-    },
-    {
-      'position': 'UI Designer',
-      'jobtype': 'Part Time',
-      'workplace': 'Hybrid',
-      'location': 'CodeSphere-Colombo,Sri Lanka',
-      'salaryLower': 2000,
-      'salaryUpper': 15000,
-      'imageUrl':'https://firebasestorage.googleapis.com/v0/b/physics-book-15c4d.appspot.com/o/download%20(1).png?alt=media&token=d32986bb-9ed8-4f0d-8e0a-21592cea9d5d',
-    },
-    {
-      'position': 'UI Designer',
-      'jobtype': 'Part Time',
-      'workplace': 'Hybrid',
-      'location': 'CodeSphere-Colombo,Sri Lanka',
-      'salaryLower': 2000,
-      'salaryUpper': 15000,
-      'imageUrl':'https://firebasestorage.googleapis.com/v0/b/physics-book-15c4d.appspot.com/o/download%20(1).png?alt=media&token=d32986bb-9ed8-4f0d-8e0a-21592cea9d5d',
-    },
-    {
-      'position': 'UI Designer',
-      'jobtype': 'Part Time',
-      'workplace': 'Hybrid',
-      'location': 'CodeSphere-Colombo,Sri Lanka',
-      'salaryLower': 2000,
-      'salaryUpper': 15000,
-      'imageUrl':'https://firebasestorage.googleapis.com/v0/b/physics-book-15c4d.appspot.com/o/download%20(1).png?alt=media&token=d32986bb-9ed8-4f0d-8e0a-21592cea9d5d',
-    },
-    {
-      'position': 'UI Designer',
-      'jobtype': 'Part Time',
-      'workplace': 'Hybrid',
-      'location': 'CodeSphere-Colombo,Canada',
-      'salaryLower': 2000,
-      'salaryUpper': 15000,
-      'imageUrl':'https://firebasestorage.googleapis.com/v0/b/physics-book-15c4d.appspot.com/o/download%20(1).png?alt=media&token=d32986bb-9ed8-4f0d-8e0a-21592cea9d5d',
-    }
-  ];
-
-  List<Map<String,dynamic>> filteredJobDetails =[];
+  List<JobsResponse> filteredJobDetails =[];
   bool onSearch = false;
 
   @override
   Widget build(BuildContext context) {
+    final jobProvider = Provider.of<JobProvider>(context);
     return Scaffold(
       appBar: customizedAppBar(title: '').header(context),
       drawer: CustomizedAppplicantDrawer(),
@@ -88,16 +44,12 @@ class _SavedJobsState extends State<SavedJobs> {
                     margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     child: TextFormField(
                       controller: searchController,
-                      onChanged: (value){
+                      onChanged: (value) {
                         setState(() {
                           onSearch = true;
-                          filteredJobDetails = jobDetails.where((element) =>
-                              element['position'].toString().toLowerCase().contains(value.toLowerCase()) ||
-                              element['jobtype'].toString().toLowerCase().contains(value.toLowerCase()) ||
-                              element['workplace'].toString().toLowerCase().contains(value.toLowerCase()) ||
-                              element['location'].toString().toLowerCase().contains(value.toLowerCase()) ||
-                              element['salaryLower'].toString().toLowerCase()==(value.toLowerCase()) ||
-                              element['salaryUpper'].toString().toLowerCase()==(value.toLowerCase())).toList();
+                          filteredJobDetails = jobProvider.savedJobs
+                              .where((element) => element.title.toLowerCase().contains(value.toLowerCase()))
+                              .toList();
                         });
                       },
                       decoration: InputDecoration(
@@ -128,88 +80,11 @@ class _SavedJobsState extends State<SavedJobs> {
                 onSearch==false?
                 Expanded(
                   child:ListView.builder(
-                    itemCount: jobDetails.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(16.0),
-                          color: Colors.white,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    jobDetails[index]['imageUrl'],
-                                    width: 80,
-                                    height: 80,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(width: 16),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        jobDetails[index]['position'],
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        jobDetails[index]['location'],
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Icon(Icons.bookmark),
-                              ],
-                            ),
-                            SizedBox(height: 16),
-                            Row(
-                              children: [
-                                 _buildTag(jobDetails[index]['jobtype']),
-                                SizedBox(width: 8),
-                                _buildTag(jobDetails[index]['workplace']),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'LKR ${jobDetails[index]['salaryLower'].toInt()}-${jobDetails[index]['salaryUpper'].toInt()}/Mo',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                        itemCount: jobProvider.savedJobs.length,
+                        itemBuilder: (context, index) {
+                          var job = jobProvider.savedJobs[index];
+                          return JobCardVertical(job: job);
+                        }
                   ),
                 ):onSearch==true && !filteredJobDetails.isEmpty?
                 Expanded(
@@ -217,84 +92,8 @@ class _SavedJobsState extends State<SavedJobs> {
                     itemCount: filteredJobDetails.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(16.0),
-                          color: Colors.white,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    filteredJobDetails[index]['imageUrl'],
-                                    width: 80,
-                                    height: 80,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(width: 16),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        filteredJobDetails[index]['position'],
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        filteredJobDetails[index]['location'],
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Icon(Icons.bookmark),
-                              ],
-                            ),
-                            SizedBox(height: 16),
-                            Row(
-                              children: [
-                                _buildTag(filteredJobDetails[index]['jobtype']),
-                                SizedBox(width: 8),
-                                _buildTag(filteredJobDetails[index]['workplace']),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'LKR ${filteredJobDetails[index]['salaryLower'].toInt()}-${filteredJobDetails[index]['salaryUpper'].toInt()}/Mo',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
+                      var job = filteredJobDetails[index];
+                      return JobCardVertical(job: job);
                     },
                   ),
                 ):
@@ -308,19 +107,5 @@ class _SavedJobsState extends State<SavedJobs> {
         )
     );
   }
-  Widget _buildTag(String text) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      margin: EdgeInsets.symmetric(horizontal: 2, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(color: Colors.white),
-      ),
 
-    );
-  }
 }

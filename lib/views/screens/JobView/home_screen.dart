@@ -141,7 +141,7 @@ class _SearchContainerState extends State<SearchContainer> {
 
             final jobList = await controller.jobList; // Wait for the Future to complete
             final filteredJobs = jobList
-                .where((element) => element.title.toLowerCase().startsWith(value.toLowerCase()))
+                .where((element) => element.title.toLowerCase().contains(value.toLowerCase()))
                 .toList();
 
             setState(() {

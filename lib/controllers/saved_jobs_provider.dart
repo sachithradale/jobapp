@@ -9,6 +9,12 @@ class JobProvider extends ChangeNotifier {
 
   void addToSavedJobs(JobsResponse job) {
     _savedJobs.add(job);
+    print(savedJobs);
+    notifyListeners();
+  }
+
+  void removeFromSavedJobs(JobsResponse job) {
+    _savedJobs.remove(job);
     notifyListeners();
   }
 }

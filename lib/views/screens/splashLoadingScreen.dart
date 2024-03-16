@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-
-import '../../controllers/jobs_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -15,8 +12,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _checkUserId(context); // Pass the context here
-    // Initialize data when the widget is first created
-    Provider.of<JobNotifier>(context, listen: false).getJobs();
   }
 
   Future<void> _checkUserId(BuildContext context) async { // Add context here

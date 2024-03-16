@@ -26,6 +26,7 @@ import 'package:jobapp/views/screens/workExperience.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'controllers/jobs_provider.dart';
+import 'controllers/saved_jobs_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => JobNotifier()),
+        ChangeNotifierProvider(create: (_) => JobProvider()),
       ],
       child: MaterialApp(
           title: 'Job App',
