@@ -57,7 +57,7 @@ class _profileState extends State<profile> {
   Future<void> setprofilepic() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if(prefs.getString('profilePic') == null){
-      prefs.setString('profilePic', 'assets/images/welcome.png');
+      prefs.setString('profilePic', 'assets/images/img.png');
     }else{
       setState(() {
         setState(() {
@@ -81,7 +81,7 @@ class _profileState extends State<profile> {
             children: [
               CircleAvatar(
                 radius: 50,
-                backgroundImage: profilepic.isEmpty ? AssetImage('assets/images/welcome.jpg') : Image.memory(Uint8List.fromList(profilepic)).image,
+                backgroundImage: profilepic.isEmpty ? AssetImage('assets/images/img.png') : Image.memory(Uint8List.fromList(profilepic)).image,
                ),
               SizedBox(height: 10,),
               AppFonts.normal(name, AppColor.textColor),

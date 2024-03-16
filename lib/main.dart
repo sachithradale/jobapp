@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jobapp/views/screens/JobView/filter_view.dart';
 import 'package:jobapp/views/screens/JobView/home_screen.dart';
 import 'package:jobapp/views/screens/JobView/job_detailed_view.dart';
+import 'package:jobapp/views/screens/appliedJobs.dart';
 import 'package:jobapp/views/screens/index.dart';
 import 'package:jobapp/views/screens/main_screen.dart';
 import 'package:jobapp/views/common/header.dart';
@@ -68,13 +69,13 @@ class MyApp extends StatelessWidget {
             '/jonApplicantHome': (context) =>  HomeScreen(),
             '/employerHome': (context) =>  EmployerHome(),
             '/createJob': (context) =>  CreateJob(),
-            '/jobApplication': (context) =>  applicationSubmission(),
             '/savedJobs': (context) =>  SavedJobs(),
             '/applicantHome': (context) =>  HomeScreen(),
             '/jobDetail': (context) =>  JobDetailView(),
             '/jobDetailedView': (context) => JobDetailView(),
             '/homeScreen': (context) => HomeScreen(),
-            '/filterJob' :(context) => FilterPage()
+            '/filterJob' :(context) => FilterPage(),
+            '/appliedJobs': (context) => AppliedJobs(),
           }
       ),
     );

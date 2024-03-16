@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import '../../utils/date.dart';
@@ -6,6 +9,8 @@ import '../common/colors.dart';
 import '../common/fonts.dart';
 import '../common/header.dart';
 import '../common/textField.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class Qualification extends StatefulWidget {
   const Qualification({Key? key}) : super(key: key);
@@ -19,6 +24,92 @@ class _QualificationState extends State<Qualification> {
   TextEditingController qualificationController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+
+  var token;
+  var userId;
+
+  Future<void> saveQualification() async {
+    print('Qualification: ${qualificationController.text}');
+    print('Date: ${dateController.text}');
+    print('Description: ${descriptionController.text}');
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+    userId = prefs.getString('id');
+
+    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/update/$userId');
+    var data={
+      "qualifications":[{
+        "qualification": qualificationController.text,
+        "date": selectedDate?.toIso8601String(),
+        "description": descriptionController.text
+      }]
+    };
+    final response = await http.patch(
+      url,
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'application/json'
+      },
+      body: jsonEncode(data),
+    );
+    if(response.statusCode==200){
+      qualificationController.clear();
+      dateController.clear();
+      descriptionController.clear();
+
+      showDialog(context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                  'Success',
+                  style: TextStyle(
+                      color: Colors.green
+                  )
+              ),
+              content: Text(
+                  'Qualification added successfully',
+                  style: TextStyle(
+                      color: Colors.black
+                  )
+              ),
+              actions: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                          'Close',
+                          style: TextStyle(
+                              color: Colors.blue
+                          )
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/profile');
+                      },
+                      child: Text(
+                          'OK',
+                          style: TextStyle(
+                              color: Colors.blue
+                          )
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            );
+          }
+      );
+    }else{
+      print(response.statusCode);
+      print('Failed to add qualification');
+    }
+  }
 
   DateTime? selectedDate;
   @override
@@ -92,7 +183,7 @@ class _QualificationState extends State<Qualification> {
                 SizedBox(height: 20,),
                 Button.formButtton('Save',
                         () => {
-                      //Todo: Save to database
+                     saveQualification()
                     },
                     MediaQuery.of(context).size.width * 0.8),
               ]

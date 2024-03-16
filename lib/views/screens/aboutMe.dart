@@ -84,7 +84,6 @@ class _aboutMeState extends State<aboutMe> {
       nameController.text = userDetails['name'];
       dobController.text = userDetails['dob']!=null?userDetails['dob']:'1990-01-01';
       emailController.text = userDetails['email'];
-      print(userDetails['email']);
       phoneController.text = userDetails['phone']!=null?userDetails['phone']:prefs.getString('contact');
       fileBytes = prefs.getString('profilePic')!=null?base64Decode(prefs.getString('profilePic')!):[];
     } else {
@@ -96,7 +95,9 @@ class _aboutMeState extends State<aboutMe> {
     if(phoneController.text.isEmpty){
       showError("Please enter a Contact Number");
     }
-    socialLinks.add(linkController.text);
+    if(linkController.text.isNotEmpty){
+      socialLinks.add(linkController.text);
+    }
 
     final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/update/$userId');
     print("Token is: $token");
@@ -168,27 +169,43 @@ class _aboutMeState extends State<aboutMe> {
 
   Future<void> uploadImage() async {
      SharedPreferences prefs = await SharedPreferences.getInstance();
+     String image = base64Encode(fileBytes);
      prefs.setString('profilePic', base64Encode(fileBytes));
-     showDialog(
-         context: context,
-         builder: (BuildContext context) {
-           return AlertDialog(
-             title: Text(
-                 'Success',
-                 style: TextStyle(
-                   color: Colors.green
-                 )
-             ),
-             content: AppFonts.customizeText('Profile Picture Updated Successfully', AppColor.textColor, 14, FontWeight.normal),
-             actions: [
-               TextButton(
-                 onPressed: () => Navigator.pop(context),
-                 child: Text('OK'),
-               ),
-             ],
-           );
-         },
-     );
+     final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/update/image/$userId');
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': '$token',
+        },
+        body: jsonEncode({
+          'image': image,
+        }),
+      );
+      if(response.statusCode == 200){
+        showDialog(context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(
+                    'Success',
+                    style: TextStyle(
+                      color: Colors.green
+                    )
+                ),
+                content: AppFonts.customizeText('Profile Picture Updated Successfully', AppColor.textColor, 14, FontWeight.normal),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+            },
+        );
+      }else{
+        showError('Failed to update profile picture');
+        print('Failed to update profile picture');
+      }
   }
 
   @override

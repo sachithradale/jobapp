@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/date.dart';
@@ -34,22 +36,24 @@ class _EducationState extends State<Education> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
     userId = prefs.getString('id');
-    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/add/work-experience/$userId');
+    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/update/$userId');
     var data={
-      "institution": schoolController.text,
-      "degree": degreeController.text,
-      "field": fieldOfStudyController.text,
-      "startDate": selectedStartDate?.toIso8601String(),
-      "endDate": selectedEndDate?.toIso8601String(),
-      "description": descriptionController.text,
+      "education": [{
+        "institution": schoolController.text,
+        "degree": degreeController.text,
+        "field": fieldOfStudyController.text,
+        "startDate": selectedStartDate?.toIso8601String(),
+        "endDate": selectedEndDate?.toIso8601String(),
+        "description": descriptionController.text,
+      }]
     };
     print(data);
-    var response = await http.post(
+    var response = await http.patch(
         url,
         headers:{
           'x-access-token': token,
         },
-        body: data
+        body: jsonEncode(data)
     );
     if (response.statusCode == 200) {
       print('Work Experience Added');
@@ -74,7 +78,7 @@ class _EducationState extends State<Education> {
               content: AppFonts.customizeText('Education Details Added Successfully', AppColor.textColor, 14, FontWeight.normal),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pushNamed(context, '/profile'),
                   child: Text('OK'),
                 ),
               ],
@@ -98,7 +102,7 @@ class _EducationState extends State<Education> {
                   SizedBox(height: 20,),
                   Container(
                       width: MediaQuery.of(context).size.width * 0.8,
-                      child: TextFields.textFieldWithLabel('Harvard University','School',false,schoolController,false)
+                      child: TextFields.textFieldWithLabel('Harvard University','School/Institute',false,schoolController,false)
                   ),
                   SizedBox(height: 10,),
                   Container(

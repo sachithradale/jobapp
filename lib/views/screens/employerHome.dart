@@ -92,7 +92,7 @@ class _EmployerHomeState extends State<EmployerHome> {
                       setState(() {
                         onSearch = true;
                         filteredJobDetails = jobDetails.where((element) =>
-                        element['position'].toString().toLowerCase().contains(value.toLowerCase()) ||
+                            element['position'].toString().toLowerCase().contains(value.toLowerCase()) ||
                             element['jobtype'].toString().toLowerCase().contains(value.toLowerCase()) ||
                             element['workplace'].toString().toLowerCase().contains(value.toLowerCase()) ||
                             element['location'].toString().toLowerCase().contains(value.toLowerCase()) ||

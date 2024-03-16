@@ -48,6 +48,9 @@ class _LoginPageState extends State<LoginPage> {
       prefs.setString('user', json.encode(user));
       prefs.setString('id', userId);
 
+      emailController.clear();
+      passwordController.clear();
+
       if(userRole == 'employer') {
         Navigator.pushNamed(context, '/employerHome');
       } else {
