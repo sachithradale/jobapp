@@ -64,10 +64,8 @@ class CustomizedEmployeeDrawer extends StatelessWidget {
                   }
               );
               if(response.statusCode == 200) {
-                prefs.remove('token');
-                prefs.remove('userRole');
-                prefs.remove('user');
-                prefs.remove('userId');
+                //clear all shared preference
+                await prefs.clear();
                 Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.pushNamed(context, '/login');
               }else{
@@ -172,10 +170,7 @@ class CustomizedAppplicantDrawer extends StatelessWidget {
                 }
               );
               if(response.statusCode == 200) {
-                prefs.remove('token');
-                prefs.remove('userRole');
-                prefs.remove('user');
-                prefs.remove('userId');
+                await prefs.clear();
                 Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.pushNamed(context, '/login');
               }else{
