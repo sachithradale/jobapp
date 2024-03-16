@@ -7,6 +7,7 @@ import '../services/helpers/jobs_helper.dart';
 
 class JobNotifier extends ChangeNotifier{
   late Future<List<JobsResponse>> jobList ;
+  late Future<List<JobsResponse>> jobListForEmp ;
 
   List<JobsResponse> filteredJobDetails =[];
   bool onSearch = false;
@@ -17,4 +18,11 @@ class JobNotifier extends ChangeNotifier{
     jobList = JobHelper.getJobs();
     return jobList;
   }
+
+  Future<List<JobsResponse>> getJobsEmp(){
+
+    jobListForEmp  = JobHelper.getJobsForEmp();
+    return jobListForEmp ;
+  }
+
 }

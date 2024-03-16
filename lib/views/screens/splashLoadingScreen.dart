@@ -18,11 +18,12 @@ class _SplashScreenState extends State<SplashScreen> {
     final prefs = await SharedPreferences.getInstance();
     final String? user = prefs.getString('user');
 
+
+
+
     if (user != null) {
       final data = json.decode(user);
-      print(data);
       var userRole = data['role'];
-      print(userRole);
       if(userRole == 'employer') {
         Navigator.pushNamed(context, '/employerHome');
       } else {
