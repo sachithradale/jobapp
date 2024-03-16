@@ -29,17 +29,20 @@ class _AppliedJobsState extends State<AppliedJobs> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
     userId = prefs.getString('id');
-    Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/application/$userId');
+    Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/application/user/$userId');
     var response = await http.get(
       url,
       headers: {
         'x-access-token': token,
+        'Content-Type': 'application/json'
       },
     );
     if (response.statusCode == 200) {
       var jsonResponse = response.body;
       var dataToSend = json.decode(jsonResponse);
+      print(dataToSend);
       List<dynamic> dataList= dataToSend["data"];
+      appliedJobs.clear();
       for(var data in dataList){
         appliedJobs.add({
           'jobId': data['job']['_id'],
@@ -60,28 +63,50 @@ class _AppliedJobsState extends State<AppliedJobs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:customizedAppBar(title: 'Applied Jobs').header(context),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            appliedJobs.length == 0 ? AppFonts.subtitle('No Applied Jobs',Colors.black) : ListView.builder(
+      drawer: CustomizedAppplicantDrawer(),
+      body: FutureBuilder(
+        future: getAppliedJobs(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return ListView.builder(
               itemCount: appliedJobs.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: AppFonts.subtitle(appliedJobs[index]['jobTitle'], Colors.black),
-                  subtitle: Column(
-                    children: [
+              itemBuilder: (context, index) {
+                return Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Colors.black,
+                        width: 2
+                    ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ListTile(
+                    title: AppFonts.subtitle(appliedJobs[index]['jobTitle'], Colors.black),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         AppFonts.normal(appliedJobs[index]['location'], Colors.black),
                         AppFonts.normal(appliedJobs[index]['description'], Colors.black),
-                        AppFonts.normal(_formatSalary(appliedJobs[index]['salary'], appliedJobs[index]['currency']), Colors.black),
-                    ],
+                        AppFonts.customizeText(_formatSalary(appliedJobs[index]['salary'], appliedJobs[index]['currency']), Colors.black,14,FontWeight.bold),
+                      ],
+                    ),
+                    trailing: AppFonts.subtitle(appliedJobs[index]['status'],
+                      appliedJobs[index]['status'] == 'pending' ? Colors.orange :
+                      appliedJobs[index]['status'] == 'accepted' ? Colors.green :
+                      appliedJobs[index]['status'] == 'rejected' ? Colors.red : Colors.black
+                    ),
                   ),
-                  trailing: Text(appliedJobs[index]['status']),
                 );
               },
-            ),
-          ],
-        ),
+            );
+          }
+        },
       ),
     );
   }
