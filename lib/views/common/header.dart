@@ -51,6 +51,12 @@ class CustomizedEmployeeDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            title: AppFonts.normal('Job Interests', Colors.black),
+            onTap: () {
+              Navigator.pushNamed(context, '/jobViews');
+            },
+          ),
+          ListTile(
             title: AppFonts.normal('Logout', Colors.red),
             onTap: () async {
               //clear shared preference

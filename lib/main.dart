@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:jobapp/views/screens/JobView/filter_view.dart';
 import 'package:jobapp/views/screens/JobView/home_screen.dart';
 import 'package:jobapp/views/screens/JobView/job_detailed_view.dart';
+import 'package:jobapp/views/screens/applicantDetails.dart';
 import 'package:jobapp/views/screens/appliedJobs.dart';
 import 'package:jobapp/views/screens/index.dart';
+import 'package:jobapp/views/screens/jobViews.dart';
 import 'package:jobapp/views/screens/main_screen.dart';
 import 'package:jobapp/views/common/header.dart';
 import 'package:jobapp/views/screens/aboutMe.dart';
@@ -78,6 +80,7 @@ class MyApp extends StatelessWidget {
             '/homeScreen': (context) => HomeScreen(),
             '/filterJob' :(context) => FilterPage(),
             '/appliedJobs': (context) => AppliedJobs(),
+            '/jobViews': (context) => JobViews(),
           }
       ),
     );
