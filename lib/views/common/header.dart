@@ -51,6 +51,12 @@ class CustomizedEmployeeDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            title: AppFonts.normal('Job Interests', Colors.black),
+            onTap: () {
+              Navigator.pushNamed(context, '/jobViews');
+            },
+          ),
+          ListTile(
             title: AppFonts.normal('Logout', Colors.red),
             onTap: () async {
               //clear shared preference
@@ -64,10 +70,8 @@ class CustomizedEmployeeDrawer extends StatelessWidget {
                   }
               );
               if(response.statusCode == 200) {
-                prefs.remove('token');
-                prefs.remove('userRole');
-                prefs.remove('user');
-                prefs.remove('userId');
+                //clear all shared preference
+                await prefs.clear();
                 Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.pushNamed(context, '/login');
               }else{
@@ -172,10 +176,7 @@ class CustomizedAppplicantDrawer extends StatelessWidget {
                 }
               );
               if(response.statusCode == 200) {
-                prefs.remove('token');
-                prefs.remove('userRole');
-                prefs.remove('user');
-                prefs.remove('userId');
+                await prefs.clear();
                 Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.pushNamed(context, '/login');
               }else{

@@ -36,10 +36,11 @@ class _applicationSubmissionState extends State<applicationSubmission> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
     userId = prefs.getString('id');
+    String base64file = base64Encode(fileBytes);
     var data = {
       "job": widget.job.toString(),
       "applicant": userId.toString(),
-      "resume": filePath.toString(),
+      "resume": base64file,
       "description": messageController.text,
       "status": 'pending'
     };
@@ -58,7 +59,12 @@ class _applicationSubmissionState extends State<applicationSubmission> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Success'),
+            title: Text(
+                'Success',
+                style: TextStyle(
+                    color: Colors.green
+                )
+            ),
             content: Text('Application Submitted Successfully'),
             actions: [
               TextButton(
