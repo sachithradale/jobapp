@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jobapp/views/common/colors.dart';
 import 'package:provider/provider.dart';
 import '../../../controllers/job_view.dart';
+import '../../../controllers/jobs_provider.dart';
 import '../../common/buttons.dart';
 
 class FilterPage extends StatefulWidget {
@@ -25,6 +26,7 @@ class _FilterPageState extends State<FilterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final controller2 = Provider.of<JobNotifier>(context);
     final controller = Provider.of<NavigationController>(context); // Access controller here
     return Scaffold(
       appBar: AppBar(
@@ -51,7 +53,10 @@ class _FilterPageState extends State<FilterPage> {
               decoration: InputDecoration(
                 labelText: 'Industry',
               ),
-              onChanged: (value) {},
+              onChanged: (value) {
+
+
+              },
             ),
             SizedBox(height: 10.0),
             DropdownButtonFormField<String>(
@@ -69,15 +74,30 @@ class _FilterPageState extends State<FilterPage> {
             SizedBox(height: 10.0),
             DropdownButtonFormField<String>(
               items: [
-                DropdownMenuItem(child: Text('Sri Lanka'), value: 'SL'),
-                DropdownMenuItem(child: Text('Finland'), value: 'Fin'),
-                DropdownMenuItem(child: Text('Denmark'), value: 'Dan')
-                // Add more dropdown items
+                DropdownMenuItem(child: Text('Pine Hills'), value: 'pine'),
+                DropdownMenuItem(child: Text('Millcreek'), value: 'mill'),
+                DropdownMenuItem(child: Text('Rockford'), value: 'rock'),
+                DropdownMenuItem(child: Text('Bartlett'), value: 'bart')
+                // Add more countries as needed
               ],
               decoration: InputDecoration(
                 labelText: 'Location',
               ),
-              onChanged: (value) {},
+              onChanged: (value) async {
+                setState(() {
+                  controller2.onSearch = true;
+                });
+
+
+                final jobList = await controller2.jobList;
+                final filteredJobs = jobList
+                    .where((element) => value != null && element.location.toLowerCase().startsWith(value))
+                    .toList();
+
+                setState(() {
+                  controller2.filteredJobDetails = filteredJobs;
+                });
+              },
             ),
             SizedBox(height: 10.0),
             Text(
@@ -118,7 +138,9 @@ class _FilterPageState extends State<FilterPage> {
               }).toList(),
             ),
             SizedBox(height: 90.0),
-            Button.formButtton('Apply Filters', () {}, 200),
+            Button.formButtton('Apply Filters', () {
+              Navigator.pushNamed(context, '/homeScreen');
+            }, 200),
           ],
         ),
       ),

@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
-
-
-import '../../../controllers/job_view.dart';
-import '../../../main.dart';
+import '../../../controllers/jobs_provider.dart';
 import '../../common/JobView/job_card_vertical.dart';
-import '../../common/JobView/appbar.dart';
 import '../../common/JobView/curved_edges.dart';
 import '../../common/header.dart';
 
@@ -109,51 +103,82 @@ class HomeScreen extends StatelessWidget {
 
 
 
-
-class SearchContainer extends StatelessWidget {
+class SearchContainer extends StatefulWidget {
   const SearchContainer({
     Key? key,
     required this.screenWidth,
     required this.text,
-    this.showBackground = true,
-    this.showBorder = true
   }) : super(key: key);
 
   final double screenWidth;
   final String text;
-  final bool showBackground, showBorder;
+
+  @override
+  _SearchContainerState createState() => _SearchContainerState();
+}
+
+class _SearchContainerState extends State<SearchContainer> {
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final controller = Provider.of<NavigationController>(context);
+    final controller = Provider.of<JobNotifier>(context);
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
-        width: screenWidth,
+        width: double.infinity,
         decoration: BoxDecoration(
-          color: showBackground ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(16.0),
-          border: showBorder ? Border.all(color: Colors.grey) : null,
+          color: Colors.grey[200], // Background color for the search bar
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: text,
-                  border: InputBorder.none,
-                  prefixIcon: Icon(Icons.search),
+        child: TextFormField(
+          controller: searchController,
+          onChanged: (value) async {
+            setState(() {
+              controller.onSearch = true;
+            });
+
+            final jobList = await controller.jobList; // Wait for the Future to complete
+            final filteredJobs = jobList
+                .where((element) => element.title.toLowerCase().startsWith(value.toLowerCase()))
+                .toList();
+
+            setState(() {
+              controller.filteredJobDetails = filteredJobs;
+            });
+          },
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            suffixIcon: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      searchController.clear();
+                      controller.filteredJobDetails = [];
+                      controller.onSearch = false;
+                    });
+                  },
+                  child: Icon(Icons.remove),
                 ),
-              ),
+                SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/filterJob');
+                  },
+                  child: Icon(Icons.filter_list),
+                ),
+              ],
             ),
-            IconButton(
-              icon: Icon(Icons.filter_list),
-              onPressed: () {
-                Navigator.pushNamed(context, '/filterJob');
-              },
-            ),
-          ],
+            prefixIcon: Icon(Icons.search),
+            hintText: 'Search by job',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ), // Remove border to avoid duplicate borders
+          ),
         ),
       ),
     );
