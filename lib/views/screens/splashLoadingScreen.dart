@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../controllers/jobs_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -12,15 +14,17 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkUserId();
+    _checkUserId(context); // Pass the context here
+    // Initialize data when the widget is first created
+    Provider.of<JobNotifier>(context, listen: false).getJobs();
   }
 
-  Future<void> _checkUserId() async {
+  Future<void> _checkUserId(BuildContext context) async { // Add context here
     final prefs = await SharedPreferences.getInstance();
     final String? user = prefs.getString('user');
 
     if (user != null) {
-      final data = json.decode(user!);
+      final data = json.decode(user);
       print(data);
       var userRole = data['role'];
       print(userRole);
@@ -30,8 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushNamed(context, '/jonApplicantHome');
       }
     } else {
-      // User ID doesn't exist, navigate to login screen
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushNamed(context, '/login');
     }
   }
 
