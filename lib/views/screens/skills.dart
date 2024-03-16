@@ -1,9 +1,12 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
+import '../common/buttons.dart';
 import '../common/fonts.dart';
 import '../common/header.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Skills extends StatefulWidget {
   const Skills({Key? key}) : super(key: key);
@@ -119,6 +122,88 @@ class _SkillsState extends State<Skills> {
   List<String> filteredSkills = [];
   List<String> selectedSkills = [];
   TextEditingController searchController = TextEditingController();
+  var token;
+  var userId;
+
+  Future<void> addSkills() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+    userId = prefs.getString('id');
+    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/users/update/$userId');
+    var data={
+      "skills":selectedSkills
+    };
+    final response = await http.patch(
+      url,
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'application/json'
+      },
+      body: jsonEncode(data),
+    );
+    print(data);
+    if(response.statusCode==200){
+      selectedSkills.clear();
+      searchController.clear();
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                'Success',
+                style: TextStyle(
+                  color: Colors.green
+                )
+              ),
+              content: Text(
+                'Skills added successfully',
+                style: TextStyle(
+                  color: Colors.black
+                )
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/profile');
+                  },
+                  child: Text('OK')
+                )
+              ],
+            );
+          }
+      );
+    }else{
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                'Error',
+                style: TextStyle(
+                  color: Colors.red
+                )
+              ),
+              content: Text(
+                'Failed to add skills',
+                style: TextStyle(
+                  color: Colors.black
+                )
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK')
+                )
+              ],
+            );
+          }
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,7 +239,7 @@ class _SkillsState extends State<Skills> {
               SizedBox(height: 20,),
               Container(
                 width: MediaQuery.of(context).size.width * 0.8,
-                height: MediaQuery.of(context).size.height * 0.4,
+                height: MediaQuery.of(context).size.height * 0.3,
                 child: ListView.builder(
                   itemCount: filteredSkills.length,
                   itemBuilder: (context, index) {
@@ -178,16 +263,16 @@ class _SkillsState extends State<Skills> {
                   },
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(height: 10,),
               Container(
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: AppFonts.customizeText('Selected Skills', Colors.black, 16, FontWeight.bold),
               ),
-              SizedBox(height: 20,),
+              SizedBox(height: 10,),
               SingleChildScrollView(
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.height * 0.4,
+                  height: MediaQuery.of(context).size.height * 0.3,
                   child: ListView.builder(
                     itemCount: selectedSkills.length,
                     itemBuilder: (context, index) {
@@ -212,6 +297,7 @@ class _SkillsState extends State<Skills> {
                   ),
                 ),
               ),
+              Button.formButtton('Add Skill', () => addSkills(), MediaQuery.of(context).size.width * 0.8,)
             ]
           )
         )

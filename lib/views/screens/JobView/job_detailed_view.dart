@@ -1,16 +1,45 @@
 
 import 'package:flutter/material.dart';
+import 'package:jobapp/views/common/header.dart';
 import 'package:provider/provider.dart';
 import '../../../controllers/job_view.dart';
 import '../../../models/request/job_response.dart';
-
-
-
+import 'dart:math';
 import '../../../main.dart';
 import '../../common/buttons.dart';
+import '../applicationSubmission.dart';
 
-class JobDetailView extends StatelessWidget {
+class JobDetailView extends StatefulWidget {
+  @override
+  State<JobDetailView> createState() => _JobDetailViewState();
+}
 
+class _JobDetailViewState extends State<JobDetailView> {
+  @override
+  void initState() {
+    super.initState();
+    getCompanyName();
+  }
+
+  List<String> companyNames = [
+    'Creative Software',
+    '99X Technology',
+    'MillenniumIT',
+    'Virtusa',
+    'IFS',
+    'WSO2',
+    'Zone24x7',
+    'Sysco LABS',
+  ];
+
+  String CompanyName = '';
+
+  void getCompanyName() {
+    //generate a random integer between 0 and 7
+    Random random = Random();
+    int randomNumber = random.nextInt(8);
+    CompanyName = companyNames[randomNumber];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,17 +47,7 @@ class JobDetailView extends StatelessWidget {
     print(job);
     final controller = Provider.of<NavigationController>(context);
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => {
-            Navigator.pushNamed(
-                context,
-                '/homeScreen',
-          )},
-        ),
-        title: Text('Job Details'),
-      ),
+      appBar: customizedAppBar(title: 'Job Details').header(context),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.0),
         child: Column(
@@ -61,7 +80,7 @@ class JobDetailView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Text("ABC company"),
+                    Text(CompanyName),
                     Text(job.location),
                   ],
                 ),
@@ -126,8 +145,11 @@ class JobDetailView extends StatelessWidget {
             ),
             SizedBox(height: 20.0),
             Button.formButtton('Apply Now', () {
-              Navigator.pushNamed(context, '/jobApplication');
-            }, 200),
+              Navigator.push(context,
+                MaterialPageRoute(
+                  builder: (context) =>applicationSubmission(companyName: CompanyName, location: job.location, job: job.id,)),
+              );
+            }, MediaQuery.of(context).size.width * 0.8),
           ],
         ),
       ),

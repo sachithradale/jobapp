@@ -170,7 +170,7 @@ class JobListView extends StatelessWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator.adaptive());
               } else if (snapshot.hasError) {
-                return Text("Errorsssss: ${snapshot.error}");
+                return Text("Error: ${snapshot.error}");
               } else if (snapshot.data!.isEmpty) {
                 return const Text("No jobs available");
               } else {

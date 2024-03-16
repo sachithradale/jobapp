@@ -21,9 +21,10 @@ class JobHelper{
 
       if(response.statusCode == 200){
         var jsonResponse = json.decode(response.body);
-
+          // print(jsonResponse);
           List<dynamic> jobData = jsonResponse["data"];
           var jobList =  jobsResponseFromJson(json.encode(jobData));
+          print(jobList[0]);
         return jobList;
       }else{
         throw Exception('Failed to load jobs');

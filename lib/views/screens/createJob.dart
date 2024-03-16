@@ -72,9 +72,12 @@ class _CreateJobState extends State<CreateJob> {
     token = prefs.getString('token');
     print(token);
     userId = prefs.getString('id');
-    List<String> requirements = requirementsController.text.split(',');
-    List<String> responsibilities = responsibilitiesController.text.split(',');
-    final Uri url = Uri.parse('https://madbackend-production.up.railway.app/api/job/create');
+    List<String> requirements = [];
+    requirements.add(requirementsController.text.toString());
+    List<String> responsibilities = [];
+    responsibilities.add(responsibilitiesController.text.toString());
+    final Uri url = Uri.parse(''
+        'https://madbackend-production.up.railway.app/api/job/create');
     var data={
       "title": positionController.text,
       "description": jobDescriptionController.text,
@@ -93,6 +96,7 @@ class _CreateJobState extends State<CreateJob> {
         body: jsonEncode(data),
         headers: {
           'x-access-token': token,
+          'Content-Type': 'application/json'
         }
     );
     if(response.statusCode == 200){

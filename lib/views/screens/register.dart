@@ -60,6 +60,7 @@ class _RegisterState extends State<Register> {
         'password': password,
         'confirm_password': confirmPassword,
         'role': _selectedRole!,
+        'image': 'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'
       },
     );
 
@@ -78,7 +79,7 @@ class _RegisterState extends State<Register> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Error'),
-            content: Text('Registration failed: ${response.body}'),
+            content: Text('Registration failed: ${jsonDecode(response.body)['message']}'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),

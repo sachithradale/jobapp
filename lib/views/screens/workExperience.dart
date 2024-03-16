@@ -77,7 +77,7 @@ class _ExperienceState extends State<Experience> {
               content: AppFonts.customizeText('Work Experience Added Successfully', AppColor.textColor, 14, FontWeight.normal),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pushNamed(context, '/profile'),
                   child: Text('OK'),
                 ),
               ],
