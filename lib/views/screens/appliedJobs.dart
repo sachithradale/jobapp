@@ -80,7 +80,7 @@ class _AppliedJobsState extends State<AppliedJobs> {
                   margin: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     border: Border.all(
-                        color: Colors.black,
+                        color: Colors.blue,
                         width: 2
                     ),
                     color: Colors.white,
@@ -97,7 +97,7 @@ class _AppliedJobsState extends State<AppliedJobs> {
                       ],
                     ),
                     trailing: AppFonts.subtitle(appliedJobs[index]['status'],
-                      appliedJobs[index]['status'] == 'pending' ? Colors.orange :
+                      appliedJobs[index]['status'] == 'pending' ? Colors.amber :
                       appliedJobs[index]['status'] == 'accepted' ? Colors.green :
                       appliedJobs[index]['status'] == 'rejected' ? Colors.red : Colors.black
                     ),
